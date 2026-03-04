@@ -227,9 +227,9 @@ function fileToBase64(file) {
 }
 
 // ═══════════════════════════════════════════════════════════════════════════════
-// CLAUDE API — PDF EXTRACTION
+// GEMINI API — PDF EXTRACTION (Free tier)
 // ═══════════════════════════════════════════════════════════════════════════════
-async function extractWithClaude(base64PDF, subjectInfo, apiKey, proxyUrl) {
+async function extractWithGemini(base64PDF, subjectInfo, apiKey) {
   const moduleList = subjectInfo.modules.map(m =>
     `- Module ID "${m.id}" | ${m.num} "${m.title}"\n  Sections: ${m.subs.map(s => `ID "${s.id}" ${s.num} "${s.title}"`).join(" | ")}`
   ).join("\n");
@@ -274,33 +274,21 @@ Rules:
 - Populate every section with real content from the PDF — not generic placeholders
 - If a section's content is minimal in the PDF, write what you can and keep it accurate`;
 
-  const endpoint = proxyUrl ? proxyUrl.replace(/\/$/, '') + '/api/proxy' : 'https://api.anthropic.com/v1/messages';
-  const isProxy = !!proxyUrl;
+  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
 
   const requestBody = {
-    model: "claude-sonnet-4-20250514",
-    max_tokens: 8000,
-    messages: [{
-      role: "user",
-      content: [
-        { type: "document", source: { type: "base64", media_type: "application/pdf", data: base64PDF } },
-        { type: "text", text: prompt }
+    contents: [{
+      parts: [
+        { inline_data: { mime_type: "application/pdf", data: base64PDF } },
+        { text: prompt }
       ]
-    }]
+    }],
+    generationConfig: { temperature: 0.1, maxOutputTokens: 8192 }
   };
-
-  if (isProxy) requestBody.apiKey = apiKey;
-
-  const headers = { "Content-Type": "application/json" };
-  if (!isProxy) {
-    headers["x-api-key"] = apiKey;
-    headers["anthropic-version"] = "2023-06-01";
-    headers["anthropic-dangerous-allow-browser"] = "true";
-  }
 
   const response = await fetch(endpoint, {
     method: "POST",
-    headers,
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify(requestBody)
   });
 
@@ -309,7 +297,7 @@ Rules:
     throw new Error(err?.error?.message || `API error ${response.status}`);
   }
   const data = await response.json();
-  const raw = data.content?.map(b => b.text || "").join("") || "";
+  const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
   const clean = raw.replace(/^```(?:json)?\s*/i,"").replace(/\s*```\s*$/i,"").trim();
   return JSON.parse(clean);
 }
@@ -325,7 +313,6 @@ function ImportPanel({ t, contentStore, onImport, onClose }) {
   const [progress, setProgress] = useState(0);
   const [dragOver, setDragOver] = useState(false);
   const [apiKey, setApiKey] = useState(() => Store.get("apikey") || "");
-  const [proxyUrl, setProxyUrl] = useState(() => Store.get("proxyurl") || "");
   const [showKey, setShowKey] = useState(false);
   const fileRef = useRef(null);
   const logRef = useRef(null);
@@ -348,7 +335,6 @@ function ImportPanel({ t, contentStore, onImport, onClose }) {
     if (!file) return;
     if (!apiKey.trim()) { addLog("❌ Please enter your Anthropic API key first.", "error"); return; }
     Store.set("apikey", apiKey.trim());
-    Store.set("proxyurl", proxyUrl.trim());
     setStatus("extracting"); setLog([]); setProgress(10);
     try {
       addLog(`📄 Reading "${file.name}" (${(file.size/1024/1024).toFixed(1)} MB)…`);
@@ -357,7 +343,7 @@ function ImportPanel({ t, contentStore, onImport, onClose }) {
       addLog("🤖 Sending to Claude API — extracting all curriculum content…");
       addLog("⏳ This typically takes 30–90 seconds for a full subject PDF.");
       setStatus("parsing");
-      const result = await extractWithClaude(b64, subj, apiKey.trim(), proxyUrl.trim());
+      const result = await extractWithGemini(b64, subj, apiKey.trim());
       setProgress(90);
       const modCount = Object.keys(result.modules || {}).length;
       addLog(`✅ Success! ${modCount} modules extracted and mapped.`, "success");
@@ -391,18 +377,18 @@ function ImportPanel({ t, contentStore, onImport, onClose }) {
         <div style={{padding:"22px 28px"}}>
           {/* API Key */}
           <div style={{marginBottom:22,background:t.impBg,border:`1.5px solid ${t.imp}`,borderRadius:9,padding:"14px 16px"}}>
-            <div style={{fontSize:11.5,fontWeight:700,color:t.imp,textTransform:"uppercase",letterSpacing:"0.07em",marginBottom:6}}>🔑 Anthropic API Key</div>
+            <div style={{fontSize:11.5,fontWeight:700,color:t.imp,textTransform:"uppercase",letterSpacing:"0.07em",marginBottom:6}}>🔑 Google Gemini API Key</div>
             <p style={{fontSize:12,color:t.muted,marginBottom:10,lineHeight:1.55}}>
-              Required to call Claude for PDF extraction. Get yours free at{" "}
-              <a href="https://console.anthropic.com" target="_blank" style={{color:t.imp}}>console.anthropic.com</a>.
-              Your key is saved locally and never sent anywhere except Anthropic's API.
+              Required to call Gemini for PDF extraction. Get yours FREE at{" "}
+              <a href="https://aistudio.google.com/app/apikey" target="_blank" style={{color:t.imp}}>aistudio.google.com</a>.
+              Your key is saved locally in your browser only.
             </p>
             <div style={{display:"flex",gap:8,alignItems:"center"}}>
               <input
                 type={showKey?"text":"password"}
                 value={apiKey}
                 onChange={e=>setApiKey(e.target.value)}
-                placeholder="sk-ant-api03-..."
+                placeholder="AIza..."
                 style={{flex:1,padding:"8px 11px",borderRadius:6,border:`1px solid ${t.bdr}`,background:t.bg,color:t.txt,fontSize:13,outline:"none",fontFamily:"monospace"}}
               />
               <button onClick={()=>setShowKey(s=>!s)} style={{background:"none",border:`1px solid ${t.bdr}`,borderRadius:6,padding:"8px 11px",cursor:"pointer",color:t.muted,fontSize:12,whiteSpace:"nowrap"}}>
@@ -410,18 +396,7 @@ function ImportPanel({ t, contentStore, onImport, onClose }) {
               </button>
             </div>
             {apiKey && <div style={{marginTop:6,fontSize:11,color:t.done}}>✓ Key entered — saved to browser storage</div>}
-            <div style={{marginTop:12,borderTop:`1px solid ${t.bdr}`,paddingTop:12}}>
-              <div style={{fontSize:11,fontWeight:700,color:t.muted,marginBottom:5,textTransform:"uppercase",letterSpacing:"0.06em"}}>Proxy URL <span style={{fontWeight:400,textTransform:"none",letterSpacing:0}}>(required for GitHub Pages — see instructions below)</span></div>
-              <input
-                type="text"
-                value={proxyUrl}
-                onChange={e=>setProxyUrl(e.target.value)}
-                placeholder="https://your-proxy.vercel.app"
-                style={{width:"100%",padding:"8px 11px",borderRadius:6,border:`1px solid ${t.bdr}`,background:t.bg,color:t.txt,fontSize:13,outline:"none"}}
-              />
-              {proxyUrl && <div style={{marginTop:5,fontSize:11,color:t.done}}>✓ Proxy URL saved</div>}
-              {!proxyUrl && <div style={{marginTop:5,fontSize:11,color:"#d97706"}}>⚠ Without a proxy URL, extraction will fail on GitHub Pages due to CORS. <a href="https://github.com/new" target="_blank" style={{color:t.imp}}>Deploy the proxy first →</a></div>}
-            </div>
+
           </div>
 
           {/* Step 1 */}
@@ -478,7 +453,7 @@ function ImportPanel({ t, contentStore, onImport, onClose }) {
               style={{width:"100%",padding:"12px",borderRadius:8,border:"none",fontSize:14,fontWeight:700,cursor:(!file||!apiKey.trim()||status==="extracting"||status==="parsing")?"not-allowed":"pointer",transition:"all 0.2s",
                 background:(!file||!apiKey.trim()||status==="extracting"||status==="parsing")?t.bdr:status==="done"?t.done:t.imp,
                 color:(!file||!apiKey.trim()||status==="extracting"||status==="parsing")?t.muted:"#fff"}}>
-              {!apiKey.trim()?"🔑 Enter API Key Above First":status==="extracting"?"📄 Reading PDF…":status==="parsing"?"🤖 Claude extracting content…":status==="done"?"✅ Import Complete — Import Another?":"🚀 Start Extraction"}
+              {!apiKey.trim()?"🔑 Enter Gemini API Key First":status==="extracting"?"📄 Reading PDF…":status==="parsing"?"🤖 Claude extracting content…":status==="done"?"✅ Import Complete — Import Another?":"🚀 Start Extraction"}
             </button>
             {(status==="extracting"||status==="parsing"||status==="done")&&(
               <div style={{marginTop:10,height:5,background:t.bdr,borderRadius:3,overflow:"hidden"}}>
