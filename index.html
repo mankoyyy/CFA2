@@ -1,0 +1,976 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>CFA Level I Study Portal</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  html,body,#root{height:100%;overflow:hidden}
+  body{font-family:'Inter','Helvetica Neue',Arial,sans-serif}
+  ::-webkit-scrollbar{width:5px;height:5px}
+  ::-webkit-scrollbar-track{background:transparent}
+  ::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
+  .dark-mode ::-webkit-scrollbar-thumb{background:#444}
+  select option{background:#fff;color:#000}
+</style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useRef, useEffect, useCallback } = React;
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// CURRICULUM SKELETON — All 10 CFA Level I Subjects
+// ═══════════════════════════════════════════════════════════════════════════════
+const CURRICULUM = [
+  { id:"ethics", num:"1", title:"Ethical & Professional Standards", modules:[
+    { id:"e1", num:"1.1", title:"Ethics and Trust in the Investment Profession", subs:[
+      {id:"e1a",num:"1.1.1",title:"Why Ethics Matter"},
+      {id:"e1b",num:"1.1.2",title:"Ethical vs. Legal Standards"},
+      {id:"e1c",num:"1.1.3",title:"Decision-Making Frameworks"}
+    ]},
+    { id:"e2", num:"1.2", title:"Code of Ethics & Standards of Professional Conduct", subs:[
+      {id:"e2a",num:"1.2.1",title:"The Code of Ethics"},
+      {id:"e2b",num:"1.2.2",title:"Standards I–VII Overview"}
+    ]},
+    { id:"e3", num:"1.3", title:"GIPS Standards", subs:[
+      {id:"e3a",num:"1.3.1",title:"Introduction to GIPS"},
+      {id:"e3b",num:"1.3.2",title:"Composites and Portability"}
+    ]},
+  ]},
+  { id:"quant", num:"2", title:"Quantitative Methods", modules:[
+    { id:"q1", num:"2.1", title:"Time Value of Money", subs:[
+      {id:"q1a",num:"2.1.1",title:"Interest Rates & Required Rates of Return"},
+      {id:"q1b",num:"2.1.2",title:"Future & Present Value Calculations"},
+      {id:"q1c",num:"2.1.3",title:"Annuities and Perpetuities"}
+    ]},
+    { id:"q2", num:"2.2", title:"Statistical Concepts & Market Returns", subs:[
+      {id:"q2a",num:"2.2.1",title:"Measures of Central Tendency"},
+      {id:"q2b",num:"2.2.2",title:"Measures of Dispersion"},
+      {id:"q2c",num:"2.2.3",title:"Skewness and Kurtosis"}
+    ]},
+    { id:"q3", num:"2.3", title:"Probability Concepts", subs:[
+      {id:"q3a",num:"2.3.1",title:"Probability Rules & Trees"},
+      {id:"q3b",num:"2.3.2",title:"Bayes' Formula"}
+    ]},
+    { id:"q4", num:"2.4", title:"Common Probability Distributions", subs:[
+      {id:"q4a",num:"2.4.1",title:"Discrete Distributions"},
+      {id:"q4b",num:"2.4.2",title:"The Normal Distribution"}
+    ]},
+    { id:"q5", num:"2.5", title:"Hypothesis Testing", subs:[
+      {id:"q5a",num:"2.5.1",title:"The Testing Framework"},
+      {id:"q5b",num:"2.5.2",title:"t-tests, z-tests, and Chi-square"}
+    ]},
+  ]},
+  { id:"econ", num:"3", title:"Economics", modules:[
+    { id:"ec1", num:"3.1", title:"Demand and Supply Analysis", subs:[
+      {id:"ec1a",num:"3.1.1",title:"Demand Curves & Elasticity"},
+      {id:"ec1b",num:"3.1.2",title:"Supply Curves & Market Equilibrium"}
+    ]},
+    { id:"ec2", num:"3.2", title:"The Firm and Market Structures", subs:[
+      {id:"ec2a",num:"3.2.1",title:"Perfect Competition"},
+      {id:"ec2b",num:"3.2.2",title:"Monopoly and Oligopoly"}
+    ]},
+    { id:"ec3", num:"3.3", title:"Aggregate Output, Prices & Growth", subs:[
+      {id:"ec3a",num:"3.3.1",title:"GDP and National Accounts"},
+      {id:"ec3b",num:"3.3.2",title:"Business Cycles"}
+    ]},
+    { id:"ec4", num:"3.4", title:"Monetary and Fiscal Policy", subs:[
+      {id:"ec4a",num:"3.4.1",title:"Central Banks & Monetary Policy"},
+      {id:"ec4b",num:"3.4.2",title:"Fiscal Policy Tools"}
+    ]},
+  ]},
+  { id:"fra", num:"4", title:"Financial Statement Analysis", modules:[
+    { id:"f1", num:"4.1", title:"Financial Reporting Standards", subs:[
+      {id:"f1a",num:"4.1.1",title:"IFRS vs. US GAAP"},
+      {id:"f1b",num:"4.1.2",title:"The Conceptual Framework"}
+    ]},
+    { id:"f2", num:"4.2", title:"Income Statement", subs:[
+      {id:"f2a",num:"4.2.1",title:"Revenue Recognition"},
+      {id:"f2b",num:"4.2.2",title:"Expense Recognition & EPS"}
+    ]},
+    { id:"f3", num:"4.3", title:"Balance Sheet", subs:[
+      {id:"f3a",num:"4.3.1",title:"Assets, Liabilities & Equity"},
+      {id:"f3b",num:"4.3.2",title:"Liquidity and Solvency Ratios"}
+    ]},
+    { id:"f4", num:"4.4", title:"Cash Flow Statement", subs:[
+      {id:"f4a",num:"4.4.1",title:"Direct vs. Indirect Method"},
+      {id:"f4b",num:"4.4.2",title:"Free Cash Flow Analysis"}
+    ]},
+  ]},
+  { id:"corp", num:"5", title:"Corporate Issuers", modules:[
+    { id:"c1", num:"5.1", title:"Capital Structure", subs:[
+      {id:"c1a",num:"5.1.1",title:"Leverage and WACC"},
+      {id:"c1b",num:"5.1.2",title:"Modigliani–Miller Propositions"}
+    ]},
+    { id:"c2", num:"5.2", title:"Dividends and Share Repurchases", subs:[
+      {id:"c2a",num:"5.2.1",title:"Dividend Policy Theories"},
+      {id:"c2b",num:"5.2.2",title:"Buyback Mechanics & Signaling"}
+    ]},
+  ]},
+  { id:"equity", num:"6", title:"Equity Investments", modules:[
+    { id:"eq1", num:"6.1", title:"Market Organization & Structure", subs:[
+      {id:"eq1a",num:"6.1.1",title:"Functions of Financial Markets"},
+      {id:"eq1b",num:"6.1.2",title:"Types of Orders & Execution"}
+    ]},
+    { id:"eq2", num:"6.2", title:"Security Market Indexes", subs:[
+      {id:"eq2a",num:"6.2.1",title:"Index Construction & Weighting"},
+      {id:"eq2b",num:"6.2.2",title:"Uses of Market Indexes"}
+    ]},
+    { id:"eq3", num:"6.3", title:"Equity Valuation", subs:[
+      {id:"eq3a",num:"6.3.1",title:"Dividend Discount Models"},
+      {id:"eq3b",num:"6.3.2",title:"Free Cash Flow & Residual Income"},
+      {id:"eq3c",num:"6.3.3",title:"Price Multiples"}
+    ]},
+  ]},
+  { id:"fi", num:"7", title:"Fixed Income", modules:[
+    { id:"fi1", num:"7.1", title:"Fixed-Income Markets & Issuers", subs:[
+      {id:"fi1a",num:"7.1.1",title:"Bond Features & Types"},
+      {id:"fi1b",num:"7.1.2",title:"Primary and Secondary Markets"}
+    ]},
+    { id:"fi2", num:"7.2", title:"Bond Valuation", subs:[
+      {id:"fi2a",num:"7.2.1",title:"Price, Yield, and Maturity"},
+      {id:"fi2b",num:"7.2.2",title:"Yield Measures & Conventions"}
+    ]},
+    { id:"fi3", num:"7.3", title:"Introduction to Risk", subs:[
+      {id:"fi3a",num:"7.3.1",title:"Duration and Convexity"},
+      {id:"fi3b",num:"7.3.2",title:"Credit Risk and Spread Risk"}
+    ]},
+  ]},
+  { id:"deriv", num:"8", title:"Derivatives", modules:[
+    { id:"d1", num:"8.1", title:"Derivative Markets & Instruments", subs:[
+      {id:"d1a",num:"8.1.1",title:"Forwards, Futures, and Swaps"},
+      {id:"d1b",num:"8.1.2",title:"Options: Calls and Puts"}
+    ]},
+    { id:"d2", num:"8.2", title:"Basics of Derivative Pricing", subs:[
+      {id:"d2a",num:"8.2.1",title:"No-Arbitrage Principle"},
+      {id:"d2b",num:"8.2.2",title:"Put–Call Parity"}
+    ]},
+  ]},
+  { id:"alt", num:"9", title:"Alternative Investments", modules:[
+    { id:"a1", num:"9.1", title:"Alternative Investment Categories", subs:[
+      {id:"a1a",num:"9.1.1",title:"Hedge Funds & Private Equity"},
+      {id:"a1b",num:"9.1.2",title:"Real Estate & Commodities"}
+    ]},
+  ]},
+  { id:"pm", num:"10", title:"Portfolio Management", modules:[
+    { id:"p1", num:"10.1", title:"Portfolio Management Overview", subs:[
+      {id:"p1a",num:"10.1.1",title:"The Investment Policy Statement"},
+      {id:"p1b",num:"10.1.2",title:"Risk and Return"}
+    ]},
+    { id:"p2", num:"10.2", title:"Portfolio Planning and Construction", subs:[
+      {id:"p2a",num:"10.2.1",title:"Modern Portfolio Theory"},
+      {id:"p2b",num:"10.2.2",title:"The Efficient Frontier & CML"},
+      {id:"p2c",num:"10.2.3",title:"The Capital Asset Pricing Model"}
+    ]},
+  ]},
+];
+
+const ALL_MODULES = CURRICULUM.flatMap(s => s.modules.map(m => ({ ...m, subject: s })));
+const TOTAL = ALL_MODULES.length;
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// THEME TOKENS
+// ═══════════════════════════════════════════════════════════════════════════════
+const T = {
+  light: {
+    bg:"#fafaf8", surf:"#f2f2ee", side:"#f0efe9", bdr:"#ddddd4", txt:"#1c1c18",
+    muted:"#5c5c52", lite:"#9a9a8e", acc:"#b83025", link:"#1a3a5c",
+    atvBg:"#fdf0ee", atvTxt:"#b83025",
+    nBg:"#eef4ff", nBdr:"#2563eb", nTxt:"#1e3869",
+    dBg:"#f4eeff", dBdr:"#7c3aed", dTxt:"#3a1e7a",
+    eBg:"#edfff5", eBdr:"#16a34a", eTxt:"#1a4828",
+    qBg:"#fffceb", qBdr:"#d97706",
+    done:"#16a34a", doneBg:"#edfff5",
+    fc:"#7c3aed", fcBg:"#f4eeff",
+    imp:"#0369a1", impBg:"#e0f2fe",
+  },
+  dark: {
+    bg:"#17171c", surf:"#1f1f28", side:"#1b1b24", bdr:"#2a2a38", txt:"#e0e0d5",
+    muted:"#98988c", lite:"#525248", acc:"#e05c4a", link:"#7ab4d8",
+    atvBg:"#271b1a", atvTxt:"#e05c4a",
+    nBg:"#162030", nBdr:"#3b82f6", nTxt:"#93c5fd",
+    dBg:"#1c1630", dBdr:"#a78bfa", dTxt:"#c4b5fd",
+    eBg:"#162418", eBdr:"#4ade80", eTxt:"#86efac",
+    qBg:"#22190e", qBdr:"#f59e0b",
+    done:"#4ade80", doneBg:"#162418",
+    fc:"#a78bfa", fcBg:"#1c1630",
+    imp:"#38bdf8", impBg:"#0c2133",
+  },
+};
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// STORAGE HELPERS (localStorage fallback since window.storage may not exist)
+// ═══════════════════════════════════════════════════════════════════════════════
+const Store = {
+  get: (key) => { try { const v = localStorage.getItem("cfa_"+key); return v ? JSON.parse(v) : null; } catch(e){ return null; } },
+  set: (key, val) => { try { localStorage.setItem("cfa_"+key, JSON.stringify(val)); } catch(e){} },
+  del: (key) => { try { localStorage.removeItem("cfa_"+key); } catch(e){} },
+};
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// PDF → BASE64
+// ═══════════════════════════════════════════════════════════════════════════════
+function fileToBase64(file) {
+  return new Promise((res, rej) => {
+    const r = new FileReader();
+    r.onload = () => res(r.result.split(",")[1]);
+    r.onerror = () => rej(new Error("Read failed"));
+    r.readAsDataURL(file);
+  });
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// CLAUDE API — PDF EXTRACTION
+// ═══════════════════════════════════════════════════════════════════════════════
+async function extractWithClaude(base64PDF, subjectInfo, apiKey) {
+  const moduleList = subjectInfo.modules.map(m =>
+    `- Module ID "${m.id}" | ${m.num} "${m.title}"\n  Sections: ${m.subs.map(s => `ID "${s.id}" ${s.num} "${s.title}"`).join(" | ")}`
+  ).join("\n");
+
+  const prompt = `You are processing a CFA Level I curriculum PDF for the subject: "${subjectInfo.title}".
+
+The portal expects content mapped to these exact module and section IDs:
+${moduleList}
+
+Extract ALL content from the PDF and return ONLY a valid JSON object (no markdown fences, no explanation) with this structure:
+
+{
+  "modules": {
+    "<module_id>": {
+      "intro": "2-3 sentence intro paragraph for this module based on PDF content",
+      "sections": {
+        "<section_id>": {
+          "body": "Full extracted text for this section — 3 to 6 paragraphs, preserve key details, formulas described in prose, learning outcomes.",
+          "note": "One concise high-yield exam tip specific to this section, or null",
+          "definition": "One precise key definition from this section, or null",
+          "example": "One worked example or numerical illustration from this section"
+        }
+      },
+      "flashcards": [
+        {"q": "Question text", "a": "Answer text"}
+      ],
+      "questions": [
+        "Full practice question 1",
+        "Full practice question 2",
+        "Full practice question 3",
+        "Full practice question 4",
+        "Full practice question 5"
+      ]
+    }
+  }
+}
+
+Rules:
+- Use ONLY the exact module IDs and section IDs listed above
+- Write 5+ flashcards per module covering the most testable concepts
+- Write 5 practice questions per module that mirror CFA exam style
+- Populate every section with real content from the PDF — not generic placeholders
+- If a section's content is minimal in the PDF, write what you can and keep it accurate`;
+
+  const response = await fetch("https://api.anthropic.com/v1/messages", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "x-api-key": apiKey,
+      "anthropic-version": "2023-06-01",
+      "anthropic-dangerous-allow-browser": "true",
+    },
+    body: JSON.stringify({
+      model: "claude-sonnet-4-20250514",
+      max_tokens: 8000,
+      messages: [{
+        role: "user",
+        content: [
+          { type: "document", source: { type: "base64", media_type: "application/pdf", data: base64PDF } },
+          { type: "text", text: prompt }
+        ]
+      }]
+    })
+  });
+
+  if (!response.ok) {
+    const err = await response.json().catch(() => ({}));
+    throw new Error(err?.error?.message || `API error ${response.status}`);
+  }
+  const data = await response.json();
+  const raw = data.content?.map(b => b.text || "").join("") || "";
+  const clean = raw.replace(/^```(?:json)?\s*/i,"").replace(/\s*```\s*$/i,"").trim();
+  return JSON.parse(clean);
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// IMPORT PANEL
+// ═══════════════════════════════════════════════════════════════════════════════
+function ImportPanel({ t, contentStore, onImport, onClose }) {
+  const [selectedSubject, setSelectedSubject] = useState(CURRICULUM[0].id);
+  const [file, setFile] = useState(null);
+  const [status, setStatus] = useState("idle");
+  const [log, setLog] = useState([]);
+  const [progress, setProgress] = useState(0);
+  const [dragOver, setDragOver] = useState(false);
+  const [apiKey, setApiKey] = useState(() => Store.get("apikey") || "");
+  const [showKey, setShowKey] = useState(false);
+  const fileRef = useRef(null);
+  const logRef = useRef(null);
+
+  const subj = CURRICULUM.find(s => s.id === selectedSubject);
+  const alreadyImported = !!contentStore[selectedSubject];
+
+  const addLog = (msg, type="info") => setLog(l => [...l, { msg, type }]);
+
+  useEffect(() => {
+    if (logRef.current) logRef.current.scrollTop = logRef.current.scrollHeight;
+  }, [log]);
+
+  const handleFile = (f) => {
+    if (f?.type === "application/pdf") { setFile(f); setLog([]); setStatus("idle"); }
+    else addLog("Please select a valid PDF file.", "error");
+  };
+
+  const runImport = async () => {
+    if (!file) return;
+    if (!apiKey.trim()) { addLog("❌ Please enter your Anthropic API key first.", "error"); return; }
+    Store.set("apikey", apiKey.trim());
+    setStatus("extracting"); setLog([]); setProgress(10);
+    try {
+      addLog(`📄 Reading "${file.name}" (${(file.size/1024/1024).toFixed(1)} MB)…`);
+      const b64 = await fileToBase64(file);
+      setProgress(25);
+      addLog("🤖 Sending to Claude API — extracting all curriculum content…");
+      addLog("⏳ This typically takes 30–90 seconds for a full subject PDF.");
+      setStatus("parsing");
+      const result = await extractWithClaude(b64, subj, apiKey.trim());
+      setProgress(90);
+      const modCount = Object.keys(result.modules || {}).length;
+      addLog(`✅ Success! ${modCount} modules extracted and mapped.`, "success");
+      const fcTotal = Object.values(result.modules||{}).reduce((a,m) => a + (m.flashcards?.length||0), 0);
+      addLog(`🃏 ${fcTotal} flashcards generated across all modules.`, "success");
+      setProgress(100);
+      setStatus("done");
+      onImport(selectedSubject, result);
+    } catch(e) {
+      setStatus("error");
+      addLog(`❌ Error: ${e.message}`, "error");
+      setProgress(0);
+    }
+  };
+
+  const overlay = { position:"fixed",inset:0,background:"rgba(0,0,0,0.6)",backdropFilter:"blur(5px)",zIndex:200,display:"flex",alignItems:"center",justifyContent:"center",padding:20 };
+  const panel = { background:t.bg,border:`1px solid ${t.bdr}`,borderRadius:14,width:"100%",maxWidth:580,maxHeight:"92vh",overflow:"auto",boxShadow:"0 32px 80px rgba(0,0,0,0.35)" };
+
+  return (
+    <div style={overlay}>
+      <div style={panel}>
+        <div style={{padding:"24px 28px 18px",borderBottom:`1px solid ${t.bdr}`,display:"flex",gap:12,justifyContent:"space-between",alignItems:"flex-start"}}>
+          <div>
+            <div style={{fontSize:11,fontWeight:700,color:t.imp,textTransform:"uppercase",letterSpacing:"0.09em",marginBottom:4}}>📥 PDF Import Engine</div>
+            <h2 style={{fontFamily:"'Crimson Pro',Georgia,serif",fontSize:22,fontWeight:600,color:t.txt,margin:0}}>Import CFA Curriculum PDF</h2>
+            <p style={{fontSize:13,color:t.muted,marginTop:6,lineHeight:1.55}}>Upload an official CFA Institute PDF. Claude will automatically extract all content and populate every module, section, flashcard, and practice question.</p>
+          </div>
+          <button onClick={onClose} style={{background:"none",border:`1px solid ${t.bdr}`,borderRadius:6,padding:"4px 10px",cursor:"pointer",color:t.muted,fontSize:16,flexShrink:0}}>✕</button>
+        </div>
+
+        <div style={{padding:"22px 28px"}}>
+          {/* API Key */}
+          <div style={{marginBottom:22,background:t.impBg,border:`1.5px solid ${t.imp}`,borderRadius:9,padding:"14px 16px"}}>
+            <div style={{fontSize:11.5,fontWeight:700,color:t.imp,textTransform:"uppercase",letterSpacing:"0.07em",marginBottom:6}}>🔑 Anthropic API Key</div>
+            <p style={{fontSize:12,color:t.muted,marginBottom:10,lineHeight:1.55}}>
+              Required to call Claude for PDF extraction. Get yours free at{" "}
+              <a href="https://console.anthropic.com" target="_blank" style={{color:t.imp}}>console.anthropic.com</a>.
+              Your key is saved locally and never sent anywhere except Anthropic's API.
+            </p>
+            <div style={{display:"flex",gap:8,alignItems:"center"}}>
+              <input
+                type={showKey?"text":"password"}
+                value={apiKey}
+                onChange={e=>setApiKey(e.target.value)}
+                placeholder="sk-ant-api03-..."
+                style={{flex:1,padding:"8px 11px",borderRadius:6,border:`1px solid ${t.bdr}`,background:t.bg,color:t.txt,fontSize:13,outline:"none",fontFamily:"monospace"}}
+              />
+              <button onClick={()=>setShowKey(s=>!s)} style={{background:"none",border:`1px solid ${t.bdr}`,borderRadius:6,padding:"8px 11px",cursor:"pointer",color:t.muted,fontSize:12,whiteSpace:"nowrap"}}>
+                {showKey?"Hide":"Show"}
+              </button>
+            </div>
+            {apiKey && <div style={{marginTop:6,fontSize:11,color:t.done}}>✓ Key entered — saved to browser storage</div>}
+          </div>
+
+          {/* Step 1 */}
+          <div style={{marginBottom:20}}>
+            <div style={{fontSize:11.5,fontWeight:700,color:t.txt,textTransform:"uppercase",letterSpacing:"0.07em",marginBottom:8,display:"flex",alignItems:"center",gap:8}}>
+              <span style={{background:t.acc,color:"#fff",borderRadius:"50%",width:20,height:20,display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:11,fontWeight:800,flexShrink:0}}>1</span>
+              Select Subject
+            </div>
+            <select value={selectedSubject} onChange={e => { setSelectedSubject(e.target.value); setFile(null); setLog([]); setStatus("idle"); setProgress(0); }}
+              style={{width:"100%",padding:"9px 12px",borderRadius:7,border:`1px solid ${t.bdr}`,background:t.surf,color:t.txt,fontSize:13,outline:"none",cursor:"pointer"}}>
+              {CURRICULUM.map(s => (
+                <option key={s.id} value={s.id}>{s.num}. {s.title}{contentStore[s.id]?" ✓":""}</option>
+              ))}
+            </select>
+            {alreadyImported && <div style={{marginTop:7,fontSize:12,color:t.done,fontWeight:600}}>✓ Already imported — re-uploading will overwrite existing content.</div>}
+          </div>
+
+          {/* Step 2 */}
+          <div style={{marginBottom:20}}>
+            <div style={{fontSize:11.5,fontWeight:700,color:t.txt,textTransform:"uppercase",letterSpacing:"0.07em",marginBottom:8,display:"flex",alignItems:"center",gap:8}}>
+              <span style={{background:t.acc,color:"#fff",borderRadius:"50%",width:20,height:20,display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:11,fontWeight:800,flexShrink:0}}>2</span>
+              Upload PDF
+            </div>
+            <div
+              onDragOver={e=>{e.preventDefault();setDragOver(true);}}
+              onDragLeave={()=>setDragOver(false)}
+              onDrop={e=>{e.preventDefault();setDragOver(false);handleFile(e.dataTransfer.files[0]);}}
+              onClick={()=>fileRef.current?.click()}
+              style={{border:`2px dashed ${dragOver?t.imp:file?t.done:t.bdr}`,borderRadius:10,padding:"26px 20px",textAlign:"center",cursor:"pointer",background:dragOver?t.impBg:file?t.doneBg:t.surf,transition:"all 0.2s"}}>
+              <input ref={fileRef} type="file" accept="application/pdf" style={{display:"none"}} onChange={e=>handleFile(e.target.files[0])}/>
+              {file ? (
+                <div>
+                  <div style={{fontSize:30,marginBottom:6}}>📄</div>
+                  <div style={{fontSize:14,fontWeight:600,color:t.done}}>{file.name}</div>
+                  <div style={{fontSize:12,color:t.muted,marginTop:3}}>{(file.size/1024/1024).toFixed(1)} MB · Click to change file</div>
+                </div>
+              ) : (
+                <div>
+                  <div style={{fontSize:32,marginBottom:8}}>☁️</div>
+                  <div style={{fontSize:14,fontWeight:600,color:t.txt}}>Drop your PDF here or click to browse</div>
+                  <div style={{fontSize:12,color:t.muted,marginTop:4}}>Expected: CFA Institute PDF for <strong>{subj?.title}</strong></div>
+                </div>
+              )}
+            </div>
+          </div>
+
+          {/* Step 3 */}
+          <div style={{marginBottom:20}}>
+            <div style={{fontSize:11.5,fontWeight:700,color:t.txt,textTransform:"uppercase",letterSpacing:"0.07em",marginBottom:8,display:"flex",alignItems:"center",gap:8}}>
+              <span style={{background:t.acc,color:"#fff",borderRadius:"50%",width:20,height:20,display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:11,fontWeight:800,flexShrink:0}}>3</span>
+              Extract & Import
+            </div>
+            <button onClick={runImport} disabled={!file||!apiKey.trim()||status==="extracting"||status==="parsing"}
+              style={{width:"100%",padding:"12px",borderRadius:8,border:"none",fontSize:14,fontWeight:700,cursor:(!file||!apiKey.trim()||status==="extracting"||status==="parsing")?"not-allowed":"pointer",transition:"all 0.2s",
+                background:(!file||!apiKey.trim()||status==="extracting"||status==="parsing")?t.bdr:status==="done"?t.done:t.imp,
+                color:(!file||!apiKey.trim()||status==="extracting"||status==="parsing")?t.muted:"#fff"}}>
+              {!apiKey.trim()?"🔑 Enter API Key Above First":status==="extracting"?"📄 Reading PDF…":status==="parsing"?"🤖 Claude extracting content…":status==="done"?"✅ Import Complete — Import Another?":"🚀 Start Extraction"}
+            </button>
+            {(status==="extracting"||status==="parsing"||status==="done")&&(
+              <div style={{marginTop:10,height:5,background:t.bdr,borderRadius:3,overflow:"hidden"}}>
+                <div style={{width:`${progress}%`,height:"100%",background:status==="done"?t.done:t.imp,borderRadius:3,transition:"width 0.6s"}}/>
+              </div>
+            )}
+          </div>
+
+          {/* Log */}
+          {log.length > 0 && (
+            <div ref={logRef} style={{background:t.surf,border:`1px solid ${t.bdr}`,borderRadius:8,padding:"12px 14px",maxHeight:150,overflowY:"auto",fontFamily:"monospace"}}>
+              {log.map((l,i) => (
+                <div key={i} style={{fontSize:12,color:l.type==="error"?"#dc2626":l.type==="success"?t.done:t.muted,lineHeight:1.65,marginBottom:2}}>{l.msg}</div>
+              ))}
+            </div>
+          )}
+
+          {status==="done"&&(
+            <button onClick={onClose} style={{width:"100%",marginTop:14,padding:"11px",borderRadius:8,border:"none",background:t.done,color:"#fff",cursor:"pointer",fontSize:14,fontWeight:700}}>
+              ✓ View Imported Content →
+            </button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// FLASHCARD MODAL
+// ═══════════════════════════════════════════════════════════════════════════════
+function FlashcardModal({ mod, cards, t, onClose }) {
+  const [idx, setIdx] = useState(0);
+  const [flipped, setFlipped] = useState(false);
+  const [ratings, setRatings] = useState({});
+  const [done, setDone] = useState(false);
+
+  if (!cards?.length) return (
+    <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.55)",backdropFilter:"blur(4px)",zIndex:100,display:"flex",alignItems:"center",justifyContent:"center",padding:24}}>
+      <div style={{background:t.bg,border:`1px solid ${t.bdr}`,borderRadius:14,padding:36,maxWidth:420,textAlign:"center",boxShadow:"0 24px 60px rgba(0,0,0,0.25)"}}>
+        <div style={{fontSize:40,marginBottom:12}}>🃏</div>
+        <h3 style={{fontFamily:"'Crimson Pro',Georgia,serif",fontSize:20,color:t.txt,marginBottom:10}}>No Flashcards Yet</h3>
+        <p style={{color:t.muted,fontSize:14,marginBottom:20,lineHeight:1.6}}>Import the PDF for this subject to auto-generate flashcards from real curriculum content.</p>
+        <button onClick={onClose} style={{background:t.fc,color:"#fff",border:"none",borderRadius:7,padding:"9px 24px",cursor:"pointer",fontWeight:700,fontSize:14}}>Close</button>
+      </div>
+    </div>
+  );
+
+  const card = cards[idx];
+  const knew = Object.values(ratings).filter(r=>r==="knew").length;
+  const review = Object.values(ratings).filter(r=>r==="review").length;
+
+  const rate = (r) => {
+    setRatings(p=>({...p,[idx]:r}));
+    if (idx < cards.length-1) { setIdx(i=>i+1); setFlipped(false); }
+    else setDone(true);
+  };
+
+  return (
+    <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.55)",backdropFilter:"blur(4px)",zIndex:100,display:"flex",alignItems:"center",justifyContent:"center",padding:24}}>
+      <div style={{background:t.bg,border:`1px solid ${t.bdr}`,borderRadius:14,width:"100%",maxWidth:560,padding:32,boxShadow:"0 24px 60px rgba(0,0,0,0.25)"}}>
+        <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:22}}>
+          <div>
+            <div style={{fontSize:11,fontWeight:700,color:t.fc,textTransform:"uppercase",letterSpacing:"0.09em",marginBottom:3}}>🃏 Flashcards</div>
+            <div style={{fontSize:15,fontWeight:600,color:t.txt,fontFamily:"'Crimson Pro',Georgia,serif"}}>{mod.num} {mod.title}</div>
+          </div>
+          <button onClick={onClose} style={{background:"none",border:`1px solid ${t.bdr}`,borderRadius:6,padding:"4px 10px",cursor:"pointer",color:t.muted,fontSize:16}}>✕</button>
+        </div>
+
+        {!done ? (<>
+          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:18}}>
+            <div style={{flex:1,height:4,background:t.bdr,borderRadius:2,overflow:"hidden"}}>
+              <div style={{width:`${(idx/cards.length)*100}%`,height:"100%",background:t.fc,borderRadius:2,transition:"width 0.3s"}}/>
+            </div>
+            <span style={{fontSize:12,color:t.muted,whiteSpace:"nowrap"}}>{idx+1} / {cards.length}</span>
+          </div>
+          <div onClick={()=>setFlipped(f=>!f)} style={{minHeight:190,cursor:"pointer",background:flipped?t.fcBg:t.surf,border:`1.5px solid ${flipped?t.fc:t.bdr}`,borderRadius:11,padding:"28px 26px",marginBottom:20,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",textAlign:"center",transition:"all 0.2s"}}>
+            <div style={{fontSize:10.5,fontWeight:700,color:flipped?t.fc:t.lite,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:12}}>{flipped?"✦ Answer":"Question — tap to reveal"}</div>
+            <p style={{fontSize:16,lineHeight:1.75,color:t.txt,fontFamily:"'Crimson Pro',Georgia,serif",margin:0}}>{flipped?card.a:card.q}</p>
+          </div>
+          {flipped ? (
+            <div style={{display:"flex",gap:10}}>
+              <button onClick={()=>rate("review")} style={{flex:1,padding:"11px",borderRadius:8,border:"1.5px solid #dc2626",background:"#fef2f2",color:"#dc2626",cursor:"pointer",fontWeight:700,fontSize:13}}>🔁 Need Review</button>
+              <button onClick={()=>rate("knew")} style={{flex:1,padding:"11px",borderRadius:8,border:"1.5px solid #16a34a",background:"#f0fdf4",color:"#16a34a",cursor:"pointer",fontWeight:700,fontSize:13}}>✓ Got It</button>
+            </div>
+          ) : <p style={{textAlign:"center",fontSize:12,color:t.lite,margin:0}}>Tap card to flip · Then rate yourself honestly</p>}
+        </>) : (
+          <div style={{textAlign:"center",padding:"10px 0"}}>
+            <div style={{fontSize:44,marginBottom:10}}>🎯</div>
+            <h3 style={{fontFamily:"'Crimson Pro',Georgia,serif",fontSize:23,fontWeight:600,color:t.txt,marginBottom:6}}>Session Complete!</h3>
+            <p style={{color:t.muted,fontSize:14,marginBottom:24,lineHeight:1.6}}>{cards.length} cards reviewed for <strong style={{color:t.txt}}>{mod.title}</strong></p>
+            <div style={{display:"flex",gap:14,justifyContent:"center",marginBottom:28}}>
+              <div style={{background:"#f0fdf4",border:"1.5px solid #16a34a",borderRadius:10,padding:"14px 28px"}}>
+                <div style={{fontSize:28,fontWeight:800,color:"#16a34a"}}>{knew}</div>
+                <div style={{fontSize:12,color:"#16a34a",fontWeight:600,marginTop:2}}>Got It</div>
+              </div>
+              <div style={{background:"#fef2f2",border:"1.5px solid #dc2626",borderRadius:10,padding:"14px 28px"}}>
+                <div style={{fontSize:28,fontWeight:800,color:"#dc2626"}}>{review}</div>
+                <div style={{fontSize:12,color:"#dc2626",fontWeight:600,marginTop:2}}>Need Review</div>
+              </div>
+            </div>
+            <div style={{display:"flex",gap:10,justifyContent:"center"}}>
+              <button onClick={()=>{setIdx(0);setFlipped(false);setRatings({});setDone(false);}} style={{padding:"9px 20px",borderRadius:7,border:`1.5px solid ${t.bdr}`,background:"none",color:t.txt,cursor:"pointer",fontSize:13,fontWeight:500}}>Restart Deck</button>
+              <button onClick={onClose} style={{padding:"9px 22px",borderRadius:7,border:"none",background:t.fc,color:"#fff",cursor:"pointer",fontSize:13,fontWeight:700}}>Back to Study</button>
+            </div>
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// CALLOUT BLOCK
+// ═══════════════════════════════════════════════════════════════════════════════
+function Callout({ type, t, label, children }) {
+  if (!children) return null;
+  const s = {
+    note:{bg:t.nBg,bdr:t.nBdr,tx:t.nTxt},
+    def:{bg:t.dBg,bdr:t.dBdr,tx:t.dTxt},
+    ex:{bg:t.eBg,bdr:t.eBdr,tx:t.eTxt}
+  }[type];
+  return (
+    <div style={{background:s.bg,borderLeft:`4px solid ${s.bdr}`,borderRadius:"0 8px 8px 0",padding:"14px 20px",marginBottom:22}}>
+      <div style={{fontSize:10.5,fontWeight:700,color:s.bdr,letterSpacing:"0.09em",textTransform:"uppercase",marginBottom:7}}>{label}</div>
+      <p style={{fontSize:15.5,lineHeight:1.8,color:s.tx,fontFamily:"'Crimson Pro',Georgia,serif",margin:0}}>{children}</p>
+    </div>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// QUESTION ITEM
+// ═══════════════════════════════════════════════════════════════════════════════
+function QItem({ num, q, t }) {
+  const [open, setOpen] = useState(false);
+  return (
+    <li style={{marginBottom:12,background:t.bg,border:`1px solid ${t.bdr}`,borderRadius:8,padding:"15px 18px",listStyle:"none"}}>
+      <div style={{display:"flex",gap:12,alignItems:"flex-start"}}>
+        <div style={{background:t.acc,color:"#fff",borderRadius:5,width:26,height:26,display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,fontWeight:700,flexShrink:0,marginTop:1}}>{num}</div>
+        <div style={{flex:1}}>
+          <p style={{fontSize:15.5,lineHeight:1.72,color:t.txt,fontFamily:"'Crimson Pro',Georgia,serif",marginBottom:11,marginTop:0}}>{q}</p>
+          {!open
+            ? <button onClick={()=>setOpen(true)} style={{background:"none",border:`1px solid ${t.bdr}`,borderRadius:5,padding:"4px 13px",fontSize:12,color:t.muted,cursor:"pointer"}}>Show answer</button>
+            : <div style={{background:t.eBg,borderLeft:`3px solid ${t.eBdr}`,padding:"10px 15px",borderRadius:"0 6px 6px 0",fontSize:14.5,color:t.eTxt,fontStyle:"italic",fontFamily:"'Crimson Pro',Georgia,serif"}}>
+                [Model answer — paste from CFA answer key or re-import PDF with answers included.]
+              </div>
+          }
+        </div>
+      </div>
+    </li>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// NAV BUTTON
+// ═══════════════════════════════════════════════════════════════════════════════
+function NavBtn({ dir, mod, t, onClick }) {
+  const [hov, setHov] = useState(false);
+  const isPrev = dir==="prev";
+  return (
+    <button onClick={onClick} onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)}
+      style={{flex:1,minWidth:200,background:hov?t.surf:t.bg,border:`1.5px solid ${hov?t.acc:t.bdr}`,borderRadius:9,padding:"15px 20px",cursor:"pointer",textAlign:isPrev?"left":"right",display:"flex",flexDirection:"column",alignItems:isPrev?"flex-start":"flex-end",gap:4,transition:"all 0.15s"}}>
+      <span style={{fontSize:11,color:t.lite,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.08em"}}>{isPrev?"← Previous":"Next →"}</span>
+      <span style={{fontSize:15,color:t.txt,fontFamily:"'Crimson Pro',Georgia,serif",fontWeight:600,lineHeight:1.3}}>{mod.num} {mod.title}</span>
+      <span style={{fontSize:11.5,color:t.muted}}>{mod.subject.title}</span>
+    </button>
+  );
+}
+
+// ═══════════════════════════════════════════════════════════════════════════════
+// MAIN APP
+// ═══════════════════════════════════════════════════════════════════════════════
+function App() {
+  const [dark, setDark] = useState(() => Store.get("dark") || false);
+  const [activeId, setActiveId] = useState(ALL_MODULES[0].id);
+  const [expanded, setExpanded] = useState({ ethics:true });
+  const [sideOpen, setSideOpen] = useState(true);
+  const [search, setSearch] = useState("");
+  const [completed, setCompleted] = useState(() => Store.get("completed") || {});
+  const [contentStore, setContentStore] = useState(() => Store.get("content") || {});
+  const [showFC, setShowFC] = useState(false);
+  const [showImport, setShowImport] = useState(false);
+  const [sideView, setSideView] = useState("study");
+  const mainRef = useRef(null);
+  const t = T[dark?"dark":"light"];
+
+  // Persist on change
+  useEffect(()=>{ Store.set("dark", dark); }, [dark]);
+  useEffect(()=>{ Store.set("completed", completed); }, [completed]);
+  useEffect(()=>{ Store.set("content", contentStore); }, [contentStore]);
+
+  const handleImport = useCallback((subjectId, data) => {
+    setContentStore(prev => ({ ...prev, [subjectId]: data }));
+  }, []);
+
+  const activeMod = ALL_MODULES.find(m=>m.id===activeId) || ALL_MODULES[0];
+  const activeSubj = activeMod.subject;
+
+  const subjContent = contentStore[activeSubj.id];
+  const modContent = subjContent?.modules?.[activeMod.id];
+
+  const intro = modContent?.intro || `This module covers ${activeMod.title} within ${activeSubj.title}. Import the PDF to populate real CFA curriculum content.`;
+  const sections = activeMod.subs.map(sub => ({
+    ...sub,
+    body: modContent?.sections?.[sub.id]?.body || `[Import the "${activeSubj.title}" PDF to populate this section with real curriculum text.]`,
+    note: modContent?.sections?.[sub.id]?.note || null,
+    definition: modContent?.sections?.[sub.id]?.definition || null,
+    example: modContent?.sections?.[sub.id]?.example || null,
+  }));
+  const flashcards = modContent?.flashcards || [];
+  const questions = modContent?.questions || [`[Import the "${activeSubj.title}" PDF to auto-generate practice questions for this module.]`];
+
+  const doneCount = Object.values(completed).filter(Boolean).length;
+  const pct = Math.round((doneCount/TOTAL)*100);
+  const importedCount = Object.keys(contentStore).length;
+
+  const modIdx = ALL_MODULES.findIndex(m=>m.id===activeId);
+  const prev = modIdx > 0 ? ALL_MODULES[modIdx-1] : null;
+  const next = modIdx < ALL_MODULES.length-1 ? ALL_MODULES[modIdx+1] : null;
+
+  const go = (mod) => {
+    setActiveId(mod.id);
+    setExpanded(e=>({...e,[mod.subject.id]:true}));
+    setSideView("study");
+    setTimeout(()=>{ if(mainRef.current) mainRef.current.scrollTop=0; },50);
+  };
+
+  const scrollTo = (id) => {
+    const el = document.getElementById(id);
+    if (el && mainRef.current) mainRef.current.scrollTo({ top: el.offsetTop-24, behavior:"smooth" });
+  };
+
+  const toggleDone = (id) => setCompleted(c=>({...c,[id]:!c[id]}));
+
+  const filtered = CURRICULUM.map(s=>({
+    ...s,
+    modules: s.modules.filter(m =>
+      search===""||
+      m.title.toLowerCase().includes(search.toLowerCase())||
+      m.subs.some(ss=>ss.title.toLowerCase().includes(search.toLowerCase()))
+    ),
+  })).filter(s=>s.modules.length>0);
+
+  const subjStats = CURRICULUM.map(s=>({
+    ...s,
+    done: s.modules.filter(m=>completed[m.id]).length,
+    total: s.modules.length,
+    imported: !!contentStore[s.id],
+    pct: Math.round((s.modules.filter(m=>completed[m.id]).length / s.modules.length)*100),
+  }));
+
+  return (
+    <div className={dark?"dark-mode":""} style={{display:"flex",height:"100vh",background:t.bg,color:t.txt,overflow:"hidden",transition:"background 0.25s,color 0.25s"}}>
+
+      {showImport && <ImportPanel t={t} contentStore={contentStore} onImport={handleImport} onClose={()=>setShowImport(false)}/>}
+      {showFC && <FlashcardModal mod={activeMod} cards={flashcards} t={t} onClose={()=>setShowFC(false)}/>}
+
+      {/* ════════ SIDEBAR ════════ */}
+      <aside style={{width:sideOpen?280:0,minWidth:sideOpen?280:0,background:t.side,borderRight:`1px solid ${t.bdr}`,display:"flex",flexDirection:"column",overflow:"hidden",transition:"width 0.25s,min-width 0.25s",flexShrink:0}}>
+
+        {/* Logo + Progress */}
+        <div style={{padding:"16px 16px 12px",borderBottom:`1px solid ${t.bdr}`,flexShrink:0}}>
+          <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:12}}>
+            <div style={{background:t.acc,color:"#fff",borderRadius:7,width:38,height:38,display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,fontWeight:800,letterSpacing:"-0.5px",flexShrink:0}}>CFA</div>
+            <div style={{flex:1,minWidth:0}}>
+              <div style={{fontSize:13,fontWeight:700,color:t.txt,lineHeight:1.25}}>Level I Study Portal</div>
+              <div style={{fontSize:11,color:t.lite,marginTop:1}}>{importedCount}/10 subjects imported</div>
+            </div>
+            <button onClick={()=>setShowImport(true)} title="Import PDF"
+              style={{background:t.impBg,border:`1.5px solid ${t.imp}`,borderRadius:6,padding:"5px 9px",cursor:"pointer",color:t.imp,fontSize:14,fontWeight:700,flexShrink:0}}>
+              📥
+            </button>
+          </div>
+          <div style={{marginBottom:10}}>
+            <div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}>
+              <span style={{fontSize:11,fontWeight:600,color:t.muted}}>Study Progress</span>
+              <span style={{fontSize:11,fontWeight:700,color:t.done}}>{pct}% · {doneCount}/{TOTAL}</span>
+            </div>
+            <div style={{height:5,background:t.bdr,borderRadius:3,overflow:"hidden"}}>
+              <div style={{width:`${pct}%`,height:"100%",background:t.done,borderRadius:3,transition:"width 0.4s"}}/>
+            </div>
+          </div>
+          <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search modules…"
+            style={{width:"100%",padding:"7px 10px",borderRadius:6,border:`1px solid ${t.bdr}`,background:t.bg,color:t.txt,fontSize:12,outline:"none"}}/>
+        </div>
+
+        {/* Tabs */}
+        <div style={{display:"flex",borderBottom:`1px solid ${t.bdr}`,flexShrink:0}}>
+          {["study","progress"].map(v=>(
+            <button key={v} onClick={()=>setSideView(v)}
+              style={{flex:1,padding:"9px",border:"none",background:sideView===v?t.bg:"none",color:sideView===v?t.acc:t.muted,fontSize:12,fontWeight:sideView===v?700:400,cursor:"pointer",borderBottom:sideView===v?`2px solid ${t.acc}`:"2px solid transparent",transition:"all 0.15s"}}>
+              {v==="study"?"📚 Modules":"📊 Progress"}
+            </button>
+          ))}
+        </div>
+
+        {/* Study Nav */}
+        {sideView==="study" && (
+          <nav style={{flex:1,overflowY:"auto",padding:"8px 0"}}>
+            {filtered.map(subj=>(
+              <div key={subj.id}>
+                <button onClick={()=>setExpanded(e=>({...e,[subj.id]:!e[subj.id]}))}
+                  style={{width:"100%",textAlign:"left",background:"none",border:"none",cursor:"pointer",padding:"8px 14px",display:"flex",alignItems:"center",gap:6,color:t.muted,fontSize:10.5,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase"}}>
+                  <span style={{display:"inline-block",transform:expanded[subj.id]?"rotate(90deg)":"rotate(0deg)",transition:"transform 0.15s",fontSize:9,color:t.lite,flexShrink:0}}>▶</span>
+                  <span style={{color:t.acc,marginRight:1,flexShrink:0}}>{subj.num}.</span>
+                  <span style={{flex:1,lineHeight:1.3}}>{subj.title}</span>
+                  <span style={{fontSize:10,color:contentStore[subj.id]?t.done:t.lite,flexShrink:0}}>{contentStore[subj.id]?"●":"○"}</span>
+                  <span style={{fontSize:10,color:t.lite,flexShrink:0,marginLeft:4}}>{subj.modules.filter(m=>completed[m.id]).length}/{subj.modules.length}</span>
+                </button>
+                {expanded[subj.id] && subj.modules.map(mod=>{
+                  const isAct = mod.id===activeId;
+                  return (
+                    <div key={mod.id}>
+                      <div style={{display:"flex",alignItems:"center"}}>
+                        <button onClick={()=>go({...mod,subject:subj})}
+                          style={{flex:1,textAlign:"left",background:isAct?t.atvBg:"none",border:"none",borderLeft:isAct?`3px solid ${t.acc}`:"3px solid transparent",cursor:"pointer",padding:"7px 8px 7px 24px",color:isAct?t.atvTxt:t.txt,fontSize:12.5,fontWeight:isAct?600:400,lineHeight:1.4,transition:"background 0.1s"}}>
+                          <span style={{color:isAct?t.acc:t.lite,fontSize:11,marginRight:5}}>{mod.num}</span>{mod.title}
+                        </button>
+                        <button onClick={()=>toggleDone(mod.id)} title={completed[mod.id]?"Unmark":"Mark complete"}
+                          style={{background:"none",border:"none",cursor:"pointer",padding:"7px 10px 7px 4px",color:completed[mod.id]?t.done:t.lite,fontSize:15,flexShrink:0,lineHeight:1}}>
+                          {completed[mod.id]?"✓":"○"}
+                        </button>
+                      </div>
+                      {isAct && mod.subs.map(sub=>(
+                        <button key={sub.id} onClick={()=>scrollTo(sub.id)}
+                          style={{width:"100%",textAlign:"left",background:"none",border:"none",cursor:"pointer",padding:"3px 14px 3px 40px",color:t.muted,fontSize:11.5,lineHeight:1.5}}>
+                          <span style={{color:t.lite,marginRight:5,fontSize:10}}>{sub.num}</span>{sub.title}
+                        </button>
+                      ))}
+                    </div>
+                  );
+                })}
+              </div>
+            ))}
+          </nav>
+        )}
+
+        {/* Progress View */}
+        {sideView==="progress" && (
+          <div style={{flex:1,overflowY:"auto",padding:"14px"}}>
+            <div style={{background:t.surf,borderRadius:10,padding:"16px",textAlign:"center",marginBottom:14}}>
+              <div style={{fontSize:34,fontWeight:800,color:t.done}}>{pct}%</div>
+              <div style={{fontSize:12,color:t.muted,marginTop:2}}>{doneCount} of {TOTAL} modules complete</div>
+              <div style={{height:6,background:t.bdr,borderRadius:3,overflow:"hidden",marginTop:10}}>
+                <div style={{width:`${pct}%`,height:"100%",background:t.done,borderRadius:3,transition:"width 0.4s"}}/>
+              </div>
+            </div>
+            <div style={{background:t.surf,borderRadius:10,padding:"14px",textAlign:"center",marginBottom:14}}>
+              <div style={{fontSize:28,fontWeight:800,color:t.imp}}>{importedCount} / 10</div>
+              <div style={{fontSize:12,color:t.muted,marginTop:2}}>Subjects with imported PDF content</div>
+            </div>
+            {subjStats.map(s=>(
+              <div key={s.id} style={{marginBottom:12}}>
+                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}>
+                  <div style={{display:"flex",alignItems:"center",gap:5,flex:1,minWidth:0}}>
+                    <span style={{fontSize:10,color:s.imported?t.done:t.lite,flexShrink:0}}>{s.imported?"●":"○"}</span>
+                    <span style={{fontSize:11.5,color:t.txt,fontWeight:500,lineHeight:1.3,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{s.num}. {s.title}</span>
+                  </div>
+                  <span style={{fontSize:11,color:s.pct===100?t.done:t.muted,fontWeight:600,flexShrink:0,marginLeft:6}}>{s.done}/{s.total}</span>
+                </div>
+                <div style={{height:4,background:t.bdr,borderRadius:2,overflow:"hidden"}}>
+                  <div style={{width:`${s.pct}%`,height:"100%",background:s.pct===100?t.done:t.acc,borderRadius:2,transition:"width 0.4s"}}/>
+                </div>
+              </div>
+            ))}
+            <button onClick={()=>{setCompleted({});Store.del("completed");}}
+              style={{width:"100%",marginTop:10,padding:"8px",borderRadius:7,border:`1px solid ${t.bdr}`,background:"none",color:t.muted,fontSize:12,cursor:"pointer"}}>
+              Reset all progress
+            </button>
+          </div>
+        )}
+
+        <div style={{padding:"10px 14px",borderTop:`1px solid ${t.bdr}`,fontSize:11,color:t.lite,flexShrink:0,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
+          <span>© CFA Institute · Level I</span>
+          <button onClick={()=>setShowImport(true)} style={{background:"none",border:"none",cursor:"pointer",color:t.imp,fontSize:11,fontWeight:700}}>+ Import PDF</button>
+        </div>
+      </aside>
+
+      {/* ════════ MAIN CONTENT ════════ */}
+      <div style={{flex:1,display:"flex",flexDirection:"column",overflow:"hidden"}}>
+
+        {/* Header */}
+        <header style={{height:52,borderBottom:`1px solid ${t.bdr}`,display:"flex",alignItems:"center",padding:"0 18px",gap:10,background:t.bg,flexShrink:0}}>
+          <button onClick={()=>setSideOpen(o=>!o)} style={{background:"none",border:`1px solid ${t.bdr}`,borderRadius:5,padding:"4px 9px",cursor:"pointer",color:t.muted,fontSize:16,lineHeight:1}}>☰</button>
+          <nav style={{flex:1,fontSize:12.5,color:t.muted,display:"flex",alignItems:"center",gap:7,overflow:"hidden",minWidth:0}}>
+            <span style={{color:t.acc,fontWeight:700,whiteSpace:"nowrap"}}>CFA Level I</span>
+            <span style={{color:t.bdr,fontSize:14,flexShrink:0}}>›</span>
+            <span style={{whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis",flexShrink:1}}>{activeSubj.title}</span>
+            <span style={{color:t.bdr,fontSize:14,flexShrink:0}}>›</span>
+            <span style={{color:t.txt,fontWeight:500,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis",flexShrink:2}}>{activeMod.title}</span>
+          </nav>
+          <div style={{display:"flex",gap:7,flexShrink:0,alignItems:"center"}}>
+            <button onClick={()=>setShowImport(true)} style={{background:t.impBg,border:`1.5px solid ${t.imp}`,borderRadius:7,padding:"5px 11px",cursor:"pointer",color:t.imp,fontSize:12,fontWeight:700,whiteSpace:"nowrap"}}>📥 Import</button>
+            <button onClick={()=>setShowFC(true)} style={{background:t.fcBg,border:`1.5px solid ${t.fc}`,borderRadius:7,padding:"5px 11px",cursor:"pointer",color:t.fc,fontSize:12,fontWeight:700,whiteSpace:"nowrap"}}>
+              🃏{flashcards.length>0?` ${flashcards.length}`:""}
+            </button>
+            <button onClick={()=>toggleDone(activeMod.id)} style={{background:completed[activeMod.id]?t.doneBg:t.surf,border:`1.5px solid ${completed[activeMod.id]?t.done:t.bdr}`,borderRadius:7,padding:"5px 11px",cursor:"pointer",color:completed[activeMod.id]?t.done:t.muted,fontSize:12,fontWeight:700,whiteSpace:"nowrap",transition:"all 0.2s"}}>
+              {completed[activeMod.id]?"✓ Done":"○ Mark Done"}
+            </button>
+            <button onClick={()=>setDark(d=>!d)} style={{background:t.surf,border:`1px solid ${t.bdr}`,borderRadius:20,padding:"5px 13px",cursor:"pointer",color:t.txt,fontSize:12,fontWeight:600,whiteSpace:"nowrap"}}>
+              {dark?"☀":"☾"}
+            </button>
+          </div>
+        </header>
+
+        {/* Scrollable Content */}
+        <main ref={mainRef} style={{flex:1,overflowY:"auto"}}>
+          <article style={{maxWidth:768,margin:"0 auto",padding:"52px 36px 100px"}}>
+
+            {/* Import CTA (unimported subjects) */}
+            {!subjContent && (
+              <div style={{background:t.impBg,border:`1.5px solid ${t.imp}`,borderRadius:10,padding:"18px 22px",marginBottom:32,display:"flex",alignItems:"center",justifyContent:"space-between",gap:16,flexWrap:"wrap"}}>
+                <div>
+                  <div style={{fontSize:13,fontWeight:700,color:t.imp,marginBottom:4}}>📥 PDF Not Yet Imported</div>
+                  <div style={{fontSize:13,color:t.muted,lineHeight:1.55}}>Upload the <strong style={{color:t.txt}}>{activeSubj.title}</strong> PDF to auto-populate all {activeSubj.modules.length} modules with real curriculum content, flashcards, and practice questions.</div>
+                </div>
+                <button onClick={()=>setShowImport(true)} style={{background:t.imp,color:"#fff",border:"none",borderRadius:7,padding:"9px 18px",cursor:"pointer",fontSize:13,fontWeight:700,whiteSpace:"nowrap",flexShrink:0}}>Import Now →</button>
+              </div>
+            )}
+
+            {/* Done banner */}
+            {completed[activeMod.id] && (
+              <div style={{background:t.doneBg,border:`1.5px solid ${t.done}`,borderRadius:9,padding:"12px 18px",marginBottom:28,display:"flex",alignItems:"center",gap:10}}>
+                <span style={{fontSize:20}}>✅</span>
+                <span style={{fontSize:13.5,color:t.done,fontWeight:600}}>Module marked as complete — great work!</span>
+              </div>
+            )}
+
+            {/* Module title */}
+            <div style={{marginBottom:36}}>
+              <div style={{fontSize:11,fontWeight:700,color:t.acc,letterSpacing:"0.1em",textTransform:"uppercase",marginBottom:10}}>{activeSubj.num} · {activeSubj.title}</div>
+              <h1 style={{fontFamily:"'Crimson Pro',Georgia,serif",fontSize:"clamp(26px,3.5vw,40px)",fontWeight:600,lineHeight:1.16,color:t.txt,marginBottom:18,letterSpacing:"-0.3px"}}>
+                {activeMod.num}&nbsp;&nbsp;{activeMod.title}
+              </h1>
+              <p style={{fontSize:17,lineHeight:1.85,color:t.muted,fontFamily:"'Crimson Pro',Georgia,serif",margin:0}}>{intro}</p>
+            </div>
+
+            {/* Flashcard CTA */}
+            {flashcards.length > 0 && (
+              <div style={{background:t.fcBg,border:`1px solid ${t.fc}`,borderRadius:9,padding:"14px 18px",marginBottom:32,display:"flex",alignItems:"center",justifyContent:"space-between",gap:12,flexWrap:"wrap"}}>
+                <div>
+                  <div style={{fontSize:12,fontWeight:700,color:t.fc,marginBottom:2}}>🃏 {flashcards.length} Flashcards — auto-generated from PDF</div>
+                  <div style={{fontSize:12.5,color:t.muted}}>Reinforce key concepts with active recall.</div>
+                </div>
+                <button onClick={()=>setShowFC(true)} style={{background:t.fc,color:"#fff",border:"none",borderRadius:7,padding:"8px 18px",cursor:"pointer",fontSize:13,fontWeight:700,whiteSpace:"nowrap"}}>Start Deck →</button>
+              </div>
+            )}
+
+            {/* In-module TOC */}
+            <div style={{background:t.surf,border:`1px solid ${t.bdr}`,borderRadius:9,padding:"16px 22px",marginBottom:44}}>
+              <div style={{fontSize:10.5,fontWeight:700,color:t.lite,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:11}}>In this module</div>
+              {sections.map(sec=>(
+                <button key={sec.id} onClick={()=>scrollTo(sec.id)} style={{display:"block",background:"none",border:"none",cursor:"pointer",textAlign:"left",padding:"3px 0",color:t.link,fontSize:13.5,lineHeight:1.55}}>
+                  <span style={{color:t.lite,marginRight:8,fontSize:11}}>{sec.num}</span>{sec.title}
+                </button>
+              ))}
+              <button onClick={()=>scrollTo(`q-${activeMod.id}`)} style={{display:"block",background:"none",border:"none",cursor:"pointer",textAlign:"left",padding:"4px 0 0",color:t.link,fontSize:13.5,borderTop:`1px solid ${t.bdr}`,marginTop:8,width:"100%"}}>
+                <span style={{color:t.lite,marginRight:8}}>✎</span>End of Module Questions
+              </button>
+            </div>
+
+            <hr style={{border:"none",borderTop:`1px solid ${t.bdr}`,marginBottom:44}}/>
+
+            {/* Sections */}
+            {sections.map(sec=>(
+              <section key={sec.id} id={sec.id} style={{marginBottom:58,scrollMarginTop:24}}>
+                <h2 style={{fontFamily:"'Crimson Pro',Georgia,serif",fontSize:25,fontWeight:600,color:t.txt,marginBottom:22,paddingBottom:11,borderBottom:`1px solid ${t.bdr}`,display:"flex",alignItems:"baseline",gap:11,marginTop:0}}>
+                  <span style={{color:t.acc,fontSize:18,fontWeight:700,flexShrink:0}}>{sec.num}</span>{sec.title}
+                </h2>
+                <Callout type="note" t={t} label="📌 Exam Note">{sec.note}</Callout>
+                <Callout type="def" t={t} label="📖 Key Definition">{sec.definition}</Callout>
+                <div style={{marginBottom:22}}>
+                  {sec.body.split("\n\n").map((p,pi)=>(
+                    <p key={pi} style={{fontSize:16.5,lineHeight:1.9,color:p.startsWith("[")?t.lite:t.txt,fontFamily:"'Crimson Pro',Georgia,serif",marginBottom:16,marginTop:0,fontStyle:p.startsWith("[")?"italic":"normal"}}>{p}</p>
+                  ))}
+                </div>
+                <Callout type="ex" t={t} label="💡 Worked Example">{sec.example}</Callout>
+              </section>
+            ))}
+
+            {/* Practice Questions */}
+            <section id={`q-${activeMod.id}`} style={{background:t.qBg,border:`1px solid ${t.qBdr}`,borderRadius:10,padding:"28px 28px 22px",marginTop:8,scrollMarginTop:24}}>
+              <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:8,flexWrap:"wrap"}}>
+                <span style={{background:t.qBdr,color:"#fff",borderRadius:5,padding:"3px 11px",fontSize:10.5,fontWeight:700,letterSpacing:"0.07em",textTransform:"uppercase"}}>Practice</span>
+                <h3 style={{fontFamily:"'Crimson Pro',Georgia,serif",fontSize:21,fontWeight:600,color:t.txt,margin:0}}>End of Module Questions</h3>
+              </div>
+              <p style={{fontSize:13.5,color:t.muted,marginBottom:22,lineHeight:1.65,marginTop:4}}>
+                {modContent?"Questions auto-generated from your imported PDF.":"Import the PDF to generate real practice questions for this module."}
+              </p>
+              <ol style={{padding:0,margin:0}}>
+                {questions.map((q,qi)=><QItem key={qi} num={qi+1} q={q} t={t}/>)}
+              </ol>
+            </section>
+
+            {/* Mark complete */}
+            <div style={{marginTop:32,textAlign:"center"}}>
+              <button onClick={()=>toggleDone(activeMod.id)} style={{background:completed[activeMod.id]?t.doneBg:t.surf,border:`1.5px solid ${completed[activeMod.id]?t.done:t.bdr}`,borderRadius:8,padding:"11px 28px",cursor:"pointer",color:completed[activeMod.id]?t.done:t.muted,fontSize:14,fontWeight:700,transition:"all 0.2s"}}>
+                {completed[activeMod.id]?"✓ Module Complete — click to undo":"○ Mark this module as complete"}
+              </button>
+            </div>
+
+            {/* Prev / Next */}
+            <div style={{display:"flex",gap:16,marginTop:30,flexWrap:"wrap"}}>
+              {prev?<NavBtn dir="prev" mod={prev} t={t} onClick={()=>go(prev)}/>:<div style={{flex:1}}/>}
+              {next&&<NavBtn dir="next" mod={next} t={t} onClick={()=>go(next)}/>}
+            </div>
+
+          </article>
+        </main>
+      </div>
+    </div>
+  );
+}
+
+ReactDOM.createRoot(document.getElementById("root")).render(<App/>);
+</script>
+</body>
+</html>
