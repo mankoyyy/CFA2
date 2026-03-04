@@ -229,7 +229,7 @@ function fileToBase64(file) {
 // ═══════════════════════════════════════════════════════════════════════════════
 // CLAUDE API — PDF EXTRACTION
 // ═══════════════════════════════════════════════════════════════════════════════
-async function extractWithClaude(base64PDF, subjectInfo, apiKey) {
+async function extractWithClaude(base64PDF, subjectInfo, apiKey, proxyUrl) {
   const moduleList = subjectInfo.modules.map(m =>
     `- Module ID "${m.id}" | ${m.num} "${m.title}"\n  Sections: ${m.subs.map(s => `ID "${s.id}" ${s.num} "${s.title}"`).join(" | ")}`
   ).join("\n");
@@ -274,25 +274,34 @@ Rules:
 - Populate every section with real content from the PDF — not generic placeholders
 - If a section's content is minimal in the PDF, write what you can and keep it accurate`;
 
-  const response = await fetch("https://api.anthropic.com/v1/messages", {
+  const endpoint = proxyUrl ? proxyUrl.replace(/\/$/, '') + '/api/proxy' : 'https://api.anthropic.com/v1/messages';
+  const isProxy = !!proxyUrl;
+
+  const requestBody = {
+    model: "claude-sonnet-4-20250514",
+    max_tokens: 8000,
+    messages: [{
+      role: "user",
+      content: [
+        { type: "document", source: { type: "base64", media_type: "application/pdf", data: base64PDF } },
+        { type: "text", text: prompt }
+      ]
+    }]
+  };
+
+  if (isProxy) requestBody.apiKey = apiKey;
+
+  const headers = { "Content-Type": "application/json" };
+  if (!isProxy) {
+    headers["x-api-key"] = apiKey;
+    headers["anthropic-version"] = "2023-06-01";
+    headers["anthropic-dangerous-allow-browser"] = "true";
+  }
+
+  const response = await fetch(endpoint, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      "x-api-key": apiKey,
-      "anthropic-version": "2023-06-01",
-      "anthropic-dangerous-allow-browser": "true",
-    },
-    body: JSON.stringify({
-      model: "claude-sonnet-4-20250514",
-      max_tokens: 8000,
-      messages: [{
-        role: "user",
-        content: [
-          { type: "document", source: { type: "base64", media_type: "application/pdf", data: base64PDF } },
-          { type: "text", text: prompt }
-        ]
-      }]
-    })
+    headers,
+    body: JSON.stringify(requestBody)
   });
 
   if (!response.ok) {
@@ -316,6 +325,7 @@ function ImportPanel({ t, contentStore, onImport, onClose }) {
   const [progress, setProgress] = useState(0);
   const [dragOver, setDragOver] = useState(false);
   const [apiKey, setApiKey] = useState(() => Store.get("apikey") || "");
+  const [proxyUrl, setProxyUrl] = useState(() => Store.get("proxyurl") || "");
   const [showKey, setShowKey] = useState(false);
   const fileRef = useRef(null);
   const logRef = useRef(null);
@@ -338,6 +348,7 @@ function ImportPanel({ t, contentStore, onImport, onClose }) {
     if (!file) return;
     if (!apiKey.trim()) { addLog("❌ Please enter your Anthropic API key first.", "error"); return; }
     Store.set("apikey", apiKey.trim());
+    Store.set("proxyurl", proxyUrl.trim());
     setStatus("extracting"); setLog([]); setProgress(10);
     try {
       addLog(`📄 Reading "${file.name}" (${(file.size/1024/1024).toFixed(1)} MB)…`);
@@ -346,7 +357,7 @@ function ImportPanel({ t, contentStore, onImport, onClose }) {
       addLog("🤖 Sending to Claude API — extracting all curriculum content…");
       addLog("⏳ This typically takes 30–90 seconds for a full subject PDF.");
       setStatus("parsing");
-      const result = await extractWithClaude(b64, subj, apiKey.trim());
+      const result = await extractWithClaude(b64, subj, apiKey.trim(), proxyUrl.trim());
       setProgress(90);
       const modCount = Object.keys(result.modules || {}).length;
       addLog(`✅ Success! ${modCount} modules extracted and mapped.`, "success");
@@ -399,6 +410,18 @@ function ImportPanel({ t, contentStore, onImport, onClose }) {
               </button>
             </div>
             {apiKey && <div style={{marginTop:6,fontSize:11,color:t.done}}>✓ Key entered — saved to browser storage</div>}
+            <div style={{marginTop:12,borderTop:`1px solid ${t.bdr}`,paddingTop:12}}>
+              <div style={{fontSize:11,fontWeight:700,color:t.muted,marginBottom:5,textTransform:"uppercase",letterSpacing:"0.06em"}}>Proxy URL <span style={{fontWeight:400,textTransform:"none",letterSpacing:0}}>(required for GitHub Pages — see instructions below)</span></div>
+              <input
+                type="text"
+                value={proxyUrl}
+                onChange={e=>setProxyUrl(e.target.value)}
+                placeholder="https://your-proxy.vercel.app"
+                style={{width:"100%",padding:"8px 11px",borderRadius:6,border:`1px solid ${t.bdr}`,background:t.bg,color:t.txt,fontSize:13,outline:"none"}}
+              />
+              {proxyUrl && <div style={{marginTop:5,fontSize:11,color:t.done}}>✓ Proxy URL saved</div>}
+              {!proxyUrl && <div style={{marginTop:5,fontSize:11,color:"#d97706"}}>⚠ Without a proxy URL, extraction will fail on GitHub Pages due to CORS. <a href="https://github.com/new" target="_blank" style={{color:t.imp}}>Deploy the proxy first →</a></div>}
+            </div>
           </div>
 
           {/* Step 1 */}
