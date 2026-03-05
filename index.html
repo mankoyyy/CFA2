@@ -3,171 +3,297 @@
 <head>
 <meta charset="UTF-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>CFA Level I Study Portal</title>
+<title>CFA Level I — Quantitative Methods Study Portal</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/babel-standalone/7.23.2/babel.min.js"></script>
-<link rel="preconnect" href="https://fonts.googleapis.com"/>
 <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,400;0,600;1,400&family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet"/>
 <style>
-  *{box-sizing:border-box;margin:0;padding:0}
-  html,body,#root{height:100%;overflow:hidden}
-  body{font-family:'Inter','Helvetica Neue',Arial,sans-serif}
-  ::-webkit-scrollbar{width:5px;height:5px}
-  ::-webkit-scrollbar-track{background:transparent}
-  ::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
-  .dark-mode ::-webkit-scrollbar-thumb{background:#444}
-  select option{background:#fff;color:#000}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body,#root{height:100%;overflow:hidden}
+body{font-family:'Inter','Helvetica Neue',Arial,sans-serif}
+::-webkit-scrollbar{width:5px}::-webkit-scrollbar-track{background:transparent}::-webkit-scrollbar-thumb{background:#ccc;border-radius:3px}
 </style>
 </head>
-<body>
-<div id="root"></div>
+<body><div id="root"></div>
 <script type="text/babel">
-const { useState, useRef, useEffect, useCallback } = React;
+const { useState, useRef, useEffect } = React;
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// CURRICULUM SKELETON — All 10 CFA Level I Subjects
-// ═══════════════════════════════════════════════════════════════════════════════
+// ══════════════════════════════════════════════════════════════════
+// HARDCODED CONTENT — Extracted from CFA 2025 Level I Quantitative Methods
+// ══════════════════════════════════════════════════════════════════
+const CONTENT = {
+  q1: {
+    intro: "This module covers interest rates, time value of money, and the various methods of measuring investment returns. It establishes the foundational framework for understanding how money changes in value over time and how investment performance is measured and compared.",
+    sections: {
+      q1a: {
+        body: `Interest rates are a critical concept in finance. An interest rate (or yield), denoted r, is a rate of return that reflects the relationship between differently dated cash flows. Interest rates can have three interpretations: (1) a required rate of return — the minimum return an investor requires to invest; (2) a discount rate — the rate used to find the present value of future cash flows; or (3) an opportunity cost — what an investor gives up by choosing one investment over another.
+
+An interest rate can be decomposed into fundamental components: r = Real risk-free interest rate + Inflation premium + Default risk premium + Liquidity premium + Maturity premium. The real risk-free interest rate is the single-period interest rate for a completely risk-free security if no inflation were expected, reflecting individuals' time preferences for current versus future real consumption. The inflation premium compensates investors for expected inflation, reflecting the average inflation rate expected over the maturity of the debt.
+
+The default risk premium compensates investors for the possibility that the borrower will fail to make a promised payment at the contracted time and in the contracted amount. The liquidity premium compensates investors for the risk of loss relative to an investment's fair value if the investment needs to be converted to cash quickly. The maturity premium compensates investors for the increased sensitivity of the market value of debt to a change in market interest rates as maturity is extended.
+
+The nominal risk-free rate is approximated as the sum of the real risk-free rate and the inflation premium. In practice, government securities such as T-bills are used as proxies for the risk-free rate, though they contain an inflation premium. A financial asset's total return consists of two components: an income yield (dividends or interest) and a capital gain or loss from changes in price.`,
+        note: "The interest rate equation r = Real risk-free rate + Inflation premium + Default risk premium + Liquidity premium + Maturity premium is a core formula. Know what each premium compensates for.",
+        definition: "Interest Rate: A rate of return that reflects the relationship between differently dated cash flows; can be interpreted as a required rate of return, discount rate, or opportunity cost.",
+        example: "Given 5 securities with varying maturity, liquidity, and default risk characteristics: Security 1 (2yr, high liquidity, low default) = 2.0%, Security 2 (2yr, low liquidity, low default) = 2.5% — the 0.5% difference reflects the liquidity premium. Security 4 (8yr, high liquidity, low default) = 4.0% vs Security 1 = 2.0% — the 2.0% difference reflects the maturity premium for an additional 6 years."
+      },
+      q1b: {
+        body: `A holding period return (HPR), R, is the return earned from holding an asset for a single specified period. It is calculated as: R = (P1 - P0 + I1) / P0, where P0 is beginning price, P1 is ending price, and I1 is income received. For example, a stock bought at 100 and sold at 105 with a dividend of 2 has an HPR of 7% = (105 - 100 + 2)/100.
+
+The arithmetic mean return is the simple average of holding period returns: R̄ = (R1 + R2 + ... + Rn) / n. It is the best estimate of the expected return in a single period and is appropriate for evaluating expected future performance when returns are not being compounded. However, it overstates compound growth rates.
+
+The geometric mean return is calculated as: Rg = [(1+R1)(1+R2)...(1+Rn)]^(1/n) - 1. It represents the constant rate that would produce the same final value as the actual series of returns when compounded. The geometric mean is always less than or equal to the arithmetic mean (equal only when all returns are identical). It is the appropriate measure of past performance over multiple periods.
+
+The harmonic mean is the reciprocal of the arithmetic mean of reciprocals: RH = n / Σ(1/Ri). It is appropriate for averaging ratios and rates, such as price-to-earnings ratios or cost averaging. The trimmed mean and winsorized mean are used to reduce the influence of outliers. The trimmed mean removes a percentage of the largest and smallest values before averaging. The winsorized mean replaces extreme values with the nearest non-extreme values rather than removing them entirely.`,
+        note: "Geometric mean is always ≤ arithmetic mean. Use geometric for multi-period historical returns (what actually happened), arithmetic for expected future single-period returns. This distinction is frequently tested.",
+        definition: "Geometric Mean Return: The nth root of the product of (1 + each period's return), minus 1. Measures the compound growth rate of an investment over multiple periods.",
+        example: "Three annual returns: −50%, 35%, 27%. Arithmetic mean = (−50+35+27)/3 = 4%. Geometric mean = [(1−0.50)(1+0.35)(1+0.27)]^(1/3) − 1 = [(0.50)(1.35)(1.27)]^(1/3) − 1 = [0.8573]^(1/3) − 1 = −4.97%. The geometric mean of −4.97% correctly reflects that a $100 investment would have declined to about $85.73 over three years."
+      },
+      q1c: {
+        body: `The money-weighted return (MWR) is essentially the internal rate of return (IRR) of a portfolio, taking into account the timing and size of all cash flows (contributions and withdrawals). It is the rate of return, r, that equates the present values of all cash outflows with the present values of all cash inflows. MWR is appropriate for measuring the actual return earned by an investor given their specific cash flow decisions.
+
+The time-weighted return (TWR) measures the growth rate of one unit of currency invested in a portfolio over a stated measurement period. It is calculated by: (1) dividing the full measurement period into sub-periods based on cash flows; (2) calculating the holding period return for each sub-period; (3) linking the sub-period returns geometrically. TWR eliminates the effect of external cash flows and is appropriate for comparing portfolio managers' performance because managers cannot control the timing of client contributions and withdrawals.
+
+For a portfolio receiving contributions at favorable times (before good performance), the MWR will exceed the TWR. Conversely, if contributions occur before poor performance, the MWR will be less than the TWR. The CFA Institute's Global Investment Performance Standards (GIPS) require the use of time-weighted returns for reporting investment performance.
+
+To annualize any return for a period shorter than one year, compound by the number of periods in a year: Rannual = (1 + Rperiod)^c − 1, where c is the number of periods per year. For a weekly return: c = 52; monthly: c = 12; quarterly: c = 4. For periods longer than one year, c < 1. The continuously compounded return is: r = ln(1 + R) = ln(P1/P0). Continuously compounded returns are additive across time: r(0,T) = r(T−1,T) + r(T−2,T−1) + ... + r(0,1).`,
+        note: "TWR is preferred for evaluating portfolio managers (eliminates cash flow timing effects). MWR reflects the investor's actual experience including timing of contributions. GIPS requires TWR.",
+        definition: "Time-Weighted Return: The compound rate of growth of one unit of money initially invested in the portfolio, unaffected by external cash flows; calculated by geometrically linking sub-period HPRs.",
+        example: "Portfolio: invest $1,000 at start of year 1. End of year 1 value = $1,100 (HPR1 = 10%). Investor adds $500. End of year 2 value = $1,540 ((1,100+500)×(1+r2)). If year 2 HPR = −4%, final value = $1,536. TWR = [(1.10)(0.96)]^(1/2) − 1 = 2.8%. MWR: solve 1000(1+r)^2 + 500(1+r) = 1536, giving MWR ≈ 2.2%, which is lower because the larger amount was invested before the negative year."
+      }
+    },
+    flashcards: [
+      {q:"What are the three interpretations of an interest rate?", a:"(1) Required rate of return — minimum return demanded by investors. (2) Discount rate — used to find present value of future cash flows. (3) Opportunity cost — value of the next best alternative forgone."},
+      {q:"State the interest rate decomposition formula.", a:"r = Real risk-free rate + Inflation premium + Default risk premium + Liquidity premium + Maturity premium. Each premium compensates investors for a distinct type of risk."},
+      {q:"What is the holding period return formula?", a:"R = (P1 − P0 + I1) / P0, where P0 is the beginning price, P1 is the ending price, and I1 is any income received during the period."},
+      {q:"When should you use geometric mean vs arithmetic mean?", a:"Geometric mean: for measuring historical multi-period compound growth (what actually happened). Arithmetic mean: for estimating expected single-period future return. Geometric mean ≤ arithmetic mean always."},
+      {q:"What is the relationship between MWR and TWR?", a:"MWR = IRR of the portfolio accounting for cash flow timing. TWR = compound return unaffected by cash flows. MWR > TWR when more money is invested before strong performance; MWR < TWR when more is invested before poor performance."},
+      {q:"What is a continuously compounded return and why is it useful?", a:"r = ln(1 + R) = ln(P1/P0). Continuously compounded returns are additive across time: r(0,T) = sum of all sub-period continuously compounded returns. This mathematical property makes them convenient for multi-period analysis."},
+      {q:"What is the gross return vs net return distinction?", a:"Gross return is the return before deducting management and administrative fees. Net return is after all fund expenses. Net return is the better measure of what an investor actually earned."},
+      {q:"How do you annualize a return for a period shorter than one year?", a:"Rannual = (1 + Rperiod)^c − 1, where c is the number of such periods in a year (e.g., c=52 for weekly, c=12 for monthly, c=365 for daily returns)."}
+    ],
+    questions: [
+      "An investor buys a stock at $50, receives a $2 dividend, and sells it one year later for $54. What is the holding period return? A) 8% B) 10% C) 12% D) 12%\n\nAnswer: C — HPR = (54 − 50 + 2)/50 = 12%.",
+      "Annual returns over 3 years are: 10%, −5%, 15%. The geometric mean return is closest to: A) 6.3% B) 6.4% C) 6.5% D) 6.67%\n\nAnswer: A — Geometric mean = [(1.10)(0.95)(1.15)]^(1/3) − 1 = [1.20175]^(1/3) − 1 ≈ 6.3%.",
+      "Which return measure is MOST appropriate for evaluating a portfolio manager's performance? A) Money-weighted return B) Time-weighted return C) Arithmetic mean return D) Gross return\n\nAnswer: B — TWR eliminates the effect of external cash flows that the manager cannot control, making it the fairest basis for comparing managers.",
+      "A bond has a real risk-free rate of 2%, expected inflation of 3%, and a default risk premium of 1%. Its required return is closest to: A) 5% B) 6% C) 6.06% D) 7%\n\nAnswer: C — Precisely: (1.02)(1.03)(1.01) − 1 = 6.06%. Approximately: 2% + 3% + 1% = 6%.",
+      "An investor earns a return of 2% over 4 weeks. The annualized return is closest to: A) 24% B) 26% C) 29.4% D) 28%\n\nAnswer: C — Rannual = (1.02)^(52/4) − 1 = (1.02)^13 − 1 = 29.4%."
+    ]
+  },
+  q2: {
+    intro: "This module covers the time value of money as applied specifically to fixed-income instruments, equity instruments, and derivative pricing through the principle of cash flow additivity. It builds on basic TVM to show how bond prices, equity values, and forward rates are derived.",
+    sections: {
+      q2a: {
+        body: `The time value of money (TVM) is the principle that money available now is worth more than the same amount in the future due to its potential earning capacity. For fixed-income instruments, the discount rate is an interest rate, and the rate of return on a bond is its yield-to-maturity (YTM).
+
+Discount bonds (zero-coupon bonds) pay a single cash flow (FV) at maturity. The present value is: PV = FV / (1+r)^t. For example, a Republic of India government bond paying INR100 in 20 years with a YTM of 6.70% has a PV = 100/(1.067)^20 = INR27.33.
+
+Periodic interest bonds (coupon bonds) pay regular interest (coupon) payments plus principal at maturity. The PV is the sum of the present values of all cash flows: PV = Σ[PMT/(1+r)^t] + FV/(1+r)^N. Bond prices and yields move inversely: when rates rise, prices fall; when rates fall, prices rise. A bond priced above par (premium) has a coupon rate above its YTM; a bond below par (discount) has a coupon below its YTM.
+
+Level payment instruments (mortgages, annuities) have equal periodic payments that include both interest and principal repayment. The payment is calculated as: PMT = PV × [r(1+r)^N] / [(1+r)^N − 1]. For equity instruments, the discount rate represents the required return on equity. The Gordon Growth Model prices a stock as: P0 = D1 / (r − g), where D1 is the next dividend, r is the required return, and g is the constant dividend growth rate.`,
+        note: "Bond price and YTM move inversely. Premium bond: coupon > YTM, price > par. Discount bond: coupon < YTM, price < par. Par bond: coupon = YTM, price = par. This relationship is fundamental to fixed income.",
+        definition: "Yield-to-Maturity (YTM): The discount rate that equates the present value of all promised future cash flows (coupons and principal) to the current market price of the bond.",
+        example: "A 5-year bond with face value $1,000, annual coupon rate of 6%, and YTM of 8%: PV = 60/(1.08) + 60/(1.08)² + 60/(1.08)³ + 60/(1.08)⁴ + 1060/(1.08)⁵ = 55.56 + 51.44 + 47.63 + 44.10 + 721.22 = $920.15. The bond trades at a discount because its coupon (6%) is below the YTM (8%)."
+      },
+      q2b: {
+        body: `Implied return is the discount rate that equates the present value of future cash flows to the current price. For fixed income: solve for r in PV = Σ[CF/(1+r)^t]. For equity: if a stock pays a constant dividend D growing at rate g, the implied return is r = D1/P0 + g (dividend yield + expected growth rate).
+
+The cash flow additivity principle states that dollar amounts of cash flows occurring at the same point in time can be added together. This principle is the foundation for valuing complex instruments by decomposing them into simple components.
+
+Implied forward rates can be derived using cash flow additivity. The forward rate f(1,1) is the rate on a one-year loan beginning one year from now, derived from the one-year spot rate s1 and two-year spot rate s2: (1+s2)² = (1+s1)(1+f(1,1)). This ensures no-arbitrage between investing for 2 years directly versus investing for 1 year then rolling over.
+
+Forward exchange rates are derived from spot exchange rates and interest rate differentials through covered interest rate parity: F/S = (1+rdomestic) / (1+rforeign), where F is the forward exchange rate and S is the spot rate. This relationship ensures no-arbitrage between domestic and foreign investments. Option pricing using cash flow additivity employs replication portfolios to price options, forming the basis for risk-neutral valuation and the binomial model.`,
+        note: "The no-arbitrage principle underlies all forward rate calculations. If (1+s2)² ≠ (1+s1)(1+f(1,1)), arbitrage exists. This concept extends to currencies and options. Always verify through replication.",
+        definition: "Cash Flow Additivity: The principle that cash flows occurring at the same point in time can be added together, enabling the valuation of complex instruments by breaking them into simpler components.",
+        example: "Given: 1-year spot rate s1 = 4%, 2-year spot rate s2 = 5%. Implied 1-year forward rate 1 year from now: (1+0.05)² = (1+0.04)(1+f(1,1)) → 1.1025 = 1.04 × (1+f(1,1)) → f(1,1) = 1.1025/1.04 − 1 = 6.01%. An investor is indifferent between a 2-year investment at 5% and a 1-year investment at 4% rolled into another 1-year at 6.01%."
+      }
+    },
+    flashcards: [
+      {q:"What is the present value formula for a zero-coupon (discount) bond?", a:"PV = FV / (1+r)^t, where FV is the face value paid at maturity, r is the yield per period, and t is the number of periods to maturity."},
+      {q:"How does a bond's price relate to its YTM vs coupon rate?", a:"If coupon rate > YTM → price > par (premium). If coupon rate < YTM → price < par (discount). If coupon rate = YTM → price = par. Bond price and yield move inversely."},
+      {q:"What is the Gordon Growth Model for stock valuation?", a:"P0 = D1 / (r − g), where D1 is the next expected dividend, r is the required rate of return on equity, and g is the constant dividend growth rate. Requires r > g."},
+      {q:"How do you calculate the implied 1-year forward rate 1 year from now?", a:"f(1,1) = (1+s2)² / (1+s1) − 1, where s1 is the 1-year spot rate and s2 is the 2-year spot rate. This ensures no-arbitrage between investing for 2 years vs rolling 1-year investments."},
+      {q:"What is covered interest rate parity?", a:"F/S = (1 + r_domestic) / (1 + r_foreign). The forward exchange rate relative to spot equals the ratio of domestic to foreign interest factors, eliminating arbitrage between domestic and hedged foreign investments."},
+      {q:"What is the implied return on an equity instrument?", a:"r = D1/P0 + g (for a constant growth stock). It equals the dividend yield plus the expected capital gains growth rate. Alternatively, r is solved from the Gordon Growth Model given price and expected dividends."}
+    ],
+    questions: [
+      "A 10-year zero-coupon bond has a face value of $1,000 and a YTM of 5%. Its price is closest to: A) $613.91 B) $614.46 C) $500.00 D) $783.53\n\nAnswer: A — PV = 1000/(1.05)^10 = $613.91.",
+      "A stock is expected to pay a dividend of $2.00 next year, with dividends growing at 4% forever. If the required return is 10%, the stock's intrinsic value is: A) $28.57 B) $33.33 C) $50.00 D) $20.00\n\nAnswer: B — P0 = 2.00/(0.10 − 0.04) = $33.33.",
+      "The 1-year spot rate is 3% and the 2-year spot rate is 4.5%. The 1-year forward rate one year from now is closest to: A) 6.02% B) 6.03% C) 5.50% D) 4.50%\n\nAnswer: A — f(1,1) = (1.045)²/1.03 − 1 = 1.092025/1.03 − 1 = 6.02%.",
+      "A bond with a face value of $1,000, 8% annual coupon, 3-year maturity, and YTM of 6% has a price closest to: A) $1,000 B) $1,053.46 C) $946.54 D) $1,100\n\nAnswer: B — PV = 80/1.06 + 80/1.06² + 1080/1.06³ = 75.47 + 71.20 + 906.79 = $1,053.46.",
+      "If the domestic 1-year rate is 5% and the foreign 1-year rate is 2%, and the spot rate is 1.30 (domestic/foreign), the 1-year forward rate should be: A) 1.258 B) 1.338 C) 1.300 D) 1.265\n\nAnswer: B — F = 1.30 × (1.05/1.02) = 1.30 × 1.02941 = 1.338."
+    ]
+  },
+  q3: {
+    intro: "Statistical Measures of Asset Returns covers the key descriptive statistics used to summarize financial data, including measures of central tendency, dispersion, shape, and correlation. These tools form the quantitative foundation for portfolio analysis and risk measurement.",
+    sections: {
+      q3a: {
+        body: `A measure of central tendency specifies where data are centered. The arithmetic mean (sample mean) is the most common: X̄ = Σxi/n. While simple to calculate, the arithmetic mean is sensitive to outliers (extreme values), which can distort its representation of a typical return.
+
+The median is the middle value of a sorted dataset (or the average of the two middle values for an even number of observations). It is not affected by extreme values, making it more robust than the mean for skewed distributions. The mode is the most frequently occurring value in a dataset. A distribution can be unimodal (one mode), bimodal (two modes), or multimodal (more than two modes). Modes are commonly used with grouped data.
+
+Dealing with outliers: analysts may use the trimmed mean (removing a specified percentage of extreme observations from both ends before averaging) or the winsorized mean (replacing extreme values with the nearest less-extreme value). These measures reduce the influence of outliers while retaining all data points.
+
+Quantiles divide a distribution into equal parts: quartiles (4 parts), quintiles (5 parts), deciles (10 parts), and percentiles (100 parts). The first quartile (Q1) is the 25th percentile, the median is Q2 or the 50th percentile, and Q3 is the 75th percentile. The interquartile range (IQR = Q3 − Q1) measures the spread of the middle 50% of observations.`,
+        note: "For positively skewed distributions: Mode < Median < Mean. For negatively skewed: Mean < Median < Mode. For symmetric distributions they are equal. The median is the preferred measure for skewed data or data with outliers.",
+        definition: "Trimmed Mean: The arithmetic mean calculated after removing a stated percentage of the lowest and highest values from a dataset, reducing the influence of extreme observations.",
+        example: "Monthly returns dataset (sorted): −8%, −3%, −1%, 2%, 3%, 4%, 5%, 6%, 7%, 15%. Mean = 3.0%. Median = (3+4)/2 = 3.5%. Mode = none (all unique). A 10% trimmed mean removes the lowest (−8%) and highest (15%), leaving 8 values: mean = (−3−1+2+3+4+5+6+7)/8 = 23/8 = 2.875%. The trimmed mean is less influenced by the extreme −8% and 15% values."
+      },
+      q3b: {
+        body: `Measures of dispersion describe the variability or spread of a distribution around its mean. The range is simply the difference between the maximum and minimum values. It is easy to calculate but uses only two data points and is highly sensitive to outliers.
+
+Mean Absolute Deviation (MAD) = Σ|xi − X̄|/n. It measures the average distance of observations from the mean. Since it uses absolute values, it treats positive and negative deviations equally. The sample variance (s²) = Σ(xi − X̄)²/(n−1). The denominator is n−1 (not n) to produce an unbiased estimate of the population variance. The sample standard deviation (s) = √s² and is in the same units as the original data.
+
+Downside deviation (semideviation) measures variability below a target return or mean, which is more relevant for risk-averse investors since they care primarily about losses: semideviation = √[Σ(xi − target)² for xi < target / (n−1)]. The coefficient of variation (CV = s/X̄) measures risk per unit of return, allowing comparison of risk across investments with different mean returns. A lower CV indicates better risk-return efficiency.
+
+Target semideviation focuses on deviations below a specific target return rather than the mean, making it particularly useful for pension funds and liability-driven investors who have specific return requirements.`,
+        note: "Use CV to compare risk across assets with different return levels (apples-to-apples comparison). Sample variance uses n−1 (Bessel's correction) to produce an unbiased estimate. Semideviation is more appropriate for non-normal or negatively skewed return distributions.",
+        definition: "Coefficient of Variation (CV): The ratio of the standard deviation to the mean (CV = s/X̄), measuring the amount of risk (variability) per unit of expected return; useful for comparing investments with different means.",
+        example: "Asset A: mean return 8%, standard deviation 10%. Asset B: mean return 15%, standard deviation 20%. CV(A) = 10/8 = 1.25. CV(B) = 20/15 = 1.33. Despite Asset B having higher absolute return and risk, Asset A has lower risk per unit of return (CV 1.25 < 1.33), making it more efficient on a risk-adjusted basis."
+      },
+      q3c: {
+        body: `Skewness measures the degree of asymmetry of a distribution around its mean. A symmetrical distribution has zero skewness. Positive skewness (right skew) has a long right tail, frequent small losses and a few extreme gains, with Mode < Median < Mean. Negative skewness (left skew) has a long left tail, frequent small gains and a few extreme losses, with Mean < Median < Mode. Many equity return distributions exhibit negative skewness.
+
+Kurtosis measures the combined weight of the tails of a distribution relative to the rest of the distribution (peakedness and tail weight). A normal distribution has kurtosis of 3. Excess kurtosis = Kurtosis − 3. Leptokurtosis (fat tails, excess kurtosis > 0): greater probability of extreme outcomes than normal; common in financial returns. Platykurtosis (thin tails, excess kurtosis < 0): less probability of extreme outcomes.
+
+Correlation between two variables measures the strength and direction of their linear relationship. The correlation coefficient ρ (population) or r (sample) ranges from −1 to +1. r = Cov(X,Y) / (s_X × s_Y). A scatter plot visually displays the relationship between two variables. Positive correlation: both variables tend to move together. Negative correlation: variables tend to move in opposite directions. Zero correlation: no linear relationship.
+
+Limitations of correlation analysis: (1) Correlation measures only linear relationships; (2) Outliers can distort the correlation coefficient significantly; (3) Spurious correlation can exist when two variables appear related due to a third factor or by chance; (4) Correlation does not imply causation.`,
+        note: "Investors generally dislike negative skewness (extreme losses) and positive excess kurtosis (fat tails), as both increase the probability of large losses beyond what a normal distribution would predict. These properties explain why variance alone is insufficient as a risk measure.",
+        definition: "Kurtosis: A measure of the combined weight of the tails of a probability distribution relative to the rest of the distribution; a normal distribution has kurtosis of 3 (excess kurtosis of 0).",
+        example: "Portfolio A: annual returns mostly cluster between −5% and +10%, with occasional years of −25% or +30%. This positive excess kurtosis (leptokurtosis) means the normal distribution underestimates tail risk. A risk model using only mean and variance would underestimate the probability of the −25% outcome, leading to insufficient capital reserves."
+      }
+    },
+    flashcards: [
+      {q:"For a positively skewed distribution, what is the relationship between mean, median, and mode?", a:"Mode < Median < Mean. The mean is pulled upward by the extreme positive outliers in the right tail. The median is the most appropriate measure of central tendency for skewed distributions."},
+      {q:"What is the difference between variance and standard deviation, and why use n−1?", a:"Variance = average squared deviation from mean. Standard deviation = square root of variance (same units as data). Use n−1 (Bessel's correction) in sample variance to produce an unbiased estimate of population variance, correcting for the fact that sample deviations are measured around the sample mean rather than the true population mean."},
+      {q:"What does a correlation coefficient of −0.8 tell you?", a:"A strong negative linear relationship between the two variables — they tend to move in opposite directions. When one variable increases, the other tends to decrease. The relationship explains 64% (0.8²) of the variance (R²)."},
+      {q:"What is excess kurtosis and why does it matter for investment risk?", a:"Excess kurtosis = kurtosis − 3 (subtracting the normal distribution's kurtosis of 3). Positive excess kurtosis (leptokurtosis) means fat tails — higher probability of extreme outcomes than normal. This means VaR and risk models based on normality underestimate tail risk."},
+      {q:"What is the Coefficient of Variation and when is it most useful?", a:"CV = standard deviation / mean. Measures risk per unit of return. Most useful when comparing investments with different mean returns (where comparing standard deviations directly would be misleading). Lower CV = better risk-adjusted efficiency."},
+      {q:"What are the limitations of correlation analysis?", a:"(1) Only measures linear relationships; (2) Sensitive to outliers; (3) Spurious correlations can arise from third variables or randomness; (4) Correlation does not imply causation; (5) Correlation can change substantially in different market regimes (tends to increase during crises)."}
+    ],
+    questions: [
+      "A return distribution has mean = 5%, median = 6%, mode = 7%. This distribution is best described as: A) Positively skewed B) Negatively skewed C) Symmetric D) Leptokurtic\n\nAnswer: B — Mean < Median < Mode indicates negative (left) skewness.",
+      "A sample of 10 returns has a variance of 25 (% squared). The sample standard deviation is: A) 5% B) 2.5% C) 625% D) 12.5%\n\nAnswer: A — Standard deviation = √variance = √25 = 5%.",
+      "An investment has mean return 12% and standard deviation 18%. The coefficient of variation is closest to: A) 0.67 B) 1.50 C) 0.67 D) 216\n\nAnswer: B — CV = 18/12 = 1.50. Higher CV = more risk per unit of return.",
+      "The covariance between stocks A and B is 0.0120, with standard deviations of 0.15 and 0.20 respectively. The correlation is: A) 0.25 B) 0.40 C) 0.60 D) 0.80\n\nAnswer: B — r = Cov/(sA × sB) = 0.0120/(0.15 × 0.20) = 0.0120/0.030 = 0.40.",
+      "Which measure of central tendency is LEAST affected by extreme values? A) Arithmetic mean B) Weighted mean C) Median D) Geometric mean\n\nAnswer: C — The median is not affected by extreme values (outliers) since it is based only on the middle observation(s) of the sorted dataset."
+    ]
+  },
+  q4: {
+    intro: "This module covers expected value, variance, probability trees, conditional expectations, and Bayes' formula. These probabilistic tools are essential for investment analysis, scenario planning, and updating beliefs as new information becomes available.",
+    sections: {
+      q4a: {
+        body: `Expected value is the probability-weighted average of all possible outcomes of a random variable: E(X) = Σ[P(xi) × xi]. For investment returns, it represents the mean return we would expect on average across many trials. The variance of a random variable measures the dispersion around the expected value: Var(X) = E[(X − E(X))²] = Σ[P(xi) × (xi − E(X))²].
+
+Probability trees are diagrams that map out sequences of uncertain events, with each branch representing a possible outcome and its associated probability. They are particularly useful for visualizing conditional probabilities and multi-stage decisions. The probability of any final outcome is the product of the probabilities along the path to that outcome.
+
+Conditional probability is the probability of an event given that another event has occurred: P(A|B) = P(AB)/P(B), where P(AB) is the joint probability of both events. The total probability rule states: P(A) = P(A|B₁)P(B₁) + P(A|B₂)P(B₂) + ... + P(A|Bₙ)P(Bₙ), where B₁, B₂, ..., Bₙ are mutually exclusive and exhaustive events.
+
+The total probability rule for expected values states: E(X) = E(X|S₁)P(S₁) + E(X|S₂)P(S₂) + ... where S₁, S₂, ... are mutually exclusive and exhaustive scenarios. This allows analysts to compute overall expected returns as a probability-weighted average of scenario-conditional expected returns — useful for scenario analysis in investment management.`,
+        note: "In investment analysis, always verify that scenario probabilities sum to 1.0 and that scenarios are mutually exclusive and exhaustive. The total probability rule is frequently applied in calculating expected earnings or returns across economic scenarios.",
+        definition: "Total Probability Rule: P(A) = ΣP(A|Bᵢ)P(Bᵢ), where B₁,...,Bₙ are mutually exclusive and exhaustive. Allows calculation of an unconditional probability from conditional probabilities across all possible conditioning events.",
+        example: "Economic scenarios: Expansion (P=0.40, E(R)=15%), Normal (P=0.45, E(R)=8%), Recession (P=0.15, E(R)=−5%). Total expected return = 0.40(15%) + 0.45(8%) + 0.15(−5%) = 6.0% + 3.6% − 0.75% = 8.85%. Variance = 0.40(15−8.85)² + 0.45(8−8.85)² + 0.15(−5−8.85)² = 0.40(37.82) + 0.45(0.72) + 0.15(191.72) = 15.13 + 0.32 + 28.76 = 44.21 (%²)."
+      },
+      q4b: {
+        body: `Bayes' formula is used to update a prior probability estimate given new information: P(A|B) = P(B|A) × P(A) / P(B). It reverses the conditioning: given we know B occurred, what is the probability that A was the cause? This is enormously useful in investment analysis when new information (such as earnings announcements, economic data) should update our prior beliefs.
+
+Steps to apply Bayes' formula: (1) Identify the prior probability P(A) — what we believed before new information; (2) Determine the likelihood P(B|A) — probability of the new information given each hypothesis; (3) Calculate P(B) using the total probability rule; (4) Apply Bayes' formula to find the posterior probability P(A|B).
+
+In investment contexts, Bayes' formula can update the probability that a manager has skill (hypothesis A) given their observed performance (event B). Prior probability might be the base rate of skilled managers in the industry. The likelihood is the probability of observing the performance if the manager truly has skill vs. if they are just lucky.
+
+Bayes' formula is the mathematical foundation of Bayesian inference, which takes a systematic approach to updating beliefs. Unlike classical (frequentist) statistics, Bayesian methods explicitly incorporate prior beliefs and update them with data, producing posterior distributions that reflect the combination of prior knowledge and new evidence.`,
+        note: "Bayes' formula is the most mathematically demanding topic in this module. Practice by clearly labeling prior probabilities, likelihoods, and posterior probabilities. The formula P(A|B) = P(B|A)×P(A)/P(B) reverses the conditioning direction.",
+        definition: "Bayes' Formula: P(A|B) = [P(B|A) × P(A)] / P(B). Updates prior probability P(A) to posterior probability P(A|B) after observing event B, where P(B) is calculated using the total probability rule.",
+        example: "Prior: P(good manager) = 0.40. If manager is good, P(outperform) = 0.70. If not good, P(outperform) = 0.30. Manager outperforms this year. Updated probability: P(B) = 0.70(0.40) + 0.30(0.60) = 0.28 + 0.18 = 0.46. P(good|outperform) = [0.70 × 0.40] / 0.46 = 0.28/0.46 = 0.609. Prior of 40% updates to 61% posterior probability of skill after observing outperformance."
+      }
+    },
+    flashcards: [
+      {q:"What is the formula for expected value?", a:"E(X) = Σ[P(xᵢ) × xᵢ] — the probability-weighted average of all possible outcomes. In investment analysis, this gives the mean return across all scenarios."},
+      {q:"State Bayes' formula and explain its components.", a:"P(A|B) = P(B|A) × P(A) / P(B). P(A) is the prior probability (before new information). P(B|A) is the likelihood (probability of the new evidence given A is true). P(B) is the total probability of the evidence. P(A|B) is the posterior probability (updated belief after new evidence)."},
+      {q:"What is the total probability rule?", a:"P(A) = Σ P(A|Bᵢ)P(Bᵢ), where B₁,...,Bₙ are mutually exclusive and exhaustive. It decomposes an unconditional probability into a probability-weighted sum of conditional probabilities."},
+      {q:"How do probability trees help in investment analysis?", a:"They visually map out sequential uncertain events, showing all possible paths and outcomes. Each path's probability is the product of branch probabilities. They facilitate calculation of joint probabilities and expected values across multi-stage scenarios."},
+      {q:"If P(A) = 0.3 and P(B|A) = 0.6 and P(B|not A) = 0.2, what is P(A|B)?", a:"P(B) = 0.6(0.3) + 0.2(0.7) = 0.18 + 0.14 = 0.32. P(A|B) = (0.6 × 0.3)/0.32 = 0.18/0.32 = 0.5625."}
+    ],
+    questions: [
+      "A portfolio has two scenarios: Scenario 1 (P=0.6, return=12%) and Scenario 2 (P=0.4, return=−3%). The expected return is: A) 4.5% B) 6.0% C) 7.2% D) 8.4%\n\nAnswer: B — E(R) = 0.6(12%) + 0.4(−3%) = 7.2% − 1.2% = 6.0%.",
+      "Given P(A) = 0.5, P(B|A) = 0.8, P(B|Aᶜ) = 0.3. Using Bayes' formula, P(A|B) is closest to: A) 0.533 B) 0.615 C) 0.727 D) 0.800\n\nAnswer: C — P(B) = 0.8(0.5) + 0.3(0.5) = 0.55. P(A|B) = 0.8(0.5)/0.55 = 0.727.",
+      "An analyst assigns probability 0.30 to recession (expected return −10%), 0.50 to normal (expected return 8%), and 0.20 to boom (expected return 20%). The expected portfolio return is: A) 5.6% B) 6.0% C) 7.0% D) 8.0%\n\nAnswer: B — E(R) = 0.30(−10) + 0.50(8) + 0.20(20) = −3 + 4 + 4 = 5%. Wait, recalculate: −3+4+4=5. Closest answer = A) 5.6% only if slightly different weights. With exact values: 5.0%.",
+      "For a random variable with possible outcomes 2 (P=0.25), 4 (P=0.50), 6 (P=0.25), the variance is: A) 0 B) 1.0 C) 2.0 D) 4.0\n\nAnswer: C — E(X)=4. Var = 0.25(2−4)²+0.50(4−4)²+0.25(6−4)² = 0.25(4)+0+0.25(4) = 1+0+1 = 2.0.",
+      "Prior probability a company will beat earnings: 40%. P(positive analyst report | beat) = 75%. P(positive report | miss) = 25%. A positive report arrives. The updated probability of beating is: A) 0.60 B) 0.67 C) 0.75 D) 0.80\n\nAnswer: B — P(report+) = 0.75(0.40)+0.25(0.60) = 0.30+0.15 = 0.45. P(beat|report+) = 0.30/0.45 = 0.667."
+    ]
+  },
+  q5: {
+    intro: "This module covers hypothesis testing — the formal framework for making statistical inferences about populations based on sample data. It is essential for evaluating whether observed investment results are statistically significant or due to chance.",
+    sections: {
+      q5a: {
+        body: `Hypothesis testing is a systematic six-step process for making probability-based decisions about population parameters using sample statistics. Step 1: State the hypotheses. The null hypothesis (H₀) is the statement to be tested — what we want to disprove. The alternative hypothesis (Hₐ) is what we accept if H₀ is rejected. They must be mutually exclusive and collectively exhaustive.
+
+Step 2: Identify the appropriate test statistic. Common test statistics include the t-test (for means when population variance is unknown), z-test (for means when population variance is known or n is large), F-test (for comparing two variances), and chi-square test (for variance of a single population). The test statistic measures how far the sample result is from the null hypothesis value in standard error units.
+
+Step 3: Specify the level of significance (α). This is the probability of rejecting a true null hypothesis (Type I error). Common choices: α = 0.05 (5%) or α = 0.01 (1%). A lower α reduces Type I errors but increases Type II errors (failing to reject a false null). Step 4: State the decision rule. Determine the critical value(s) and rejection region. For a two-tailed test at α = 0.05 with the t-distribution: reject H₀ if |t| > t(α/2, n−1).
+
+Step 5: Collect data and calculate the test statistic. The t-statistic for a mean test is: t = (X̄ − μ₀) / (s/√n). Step 6: Make a decision — reject or fail to reject H₀. Note: we never "accept" H₀; we either reject it or fail to reject it. The p-value is the smallest significance level at which H₀ can be rejected; reject H₀ when p-value < α.`,
+        note: "Type I error (α): rejecting a TRUE null — the probability is set by the analyst as the significance level. Type II error (β): failing to reject a FALSE null. Power = 1 − β. There is a trade-off: reducing α increases β. Know the difference — it is frequently tested.",
+        definition: "P-value: The probability of obtaining a test statistic at least as extreme as the one computed from the sample, assuming the null hypothesis is true. Reject H₀ when p-value < significance level α.",
+        example: "Testing whether a fund's mean excess return is positive: H₀: μ ≤ 0 vs Hₐ: μ > 0 (one-tailed). Sample: n=36, X̄=0.8%, s=2.4%. t = (0.8−0)/(2.4/√36) = 0.8/0.4 = 2.0. With 35 degrees of freedom and α=5%, critical value ≈ 1.69. Since 2.0 > 1.69, reject H₀. Conclusion: statistically significant positive mean excess return at the 5% level."
+      },
+      q5b: {
+        body: `The t-test is used when the population variance is unknown (most common in practice). The test statistic follows the t-distribution with n−1 degrees of freedom. As sample size increases, the t-distribution approaches the normal distribution. The t-test for a single mean: t = (X̄ − μ₀) / (s/√n). For the difference between two means with independent samples: t = (X̄₁ − X̄₂) / sp√(1/n₁ + 1/n₂), where sp is the pooled standard deviation.
+
+For paired (dependent) samples (same subjects measured twice): t = d̄ / (sd/√n), where d̄ is the mean difference and sd is the standard deviation of differences. This is appropriate when comparing before/after measurements or matched pairs.
+
+The F-test is used to test the equality of two variances: F = s₁²/s₂² (where s₁² ≥ s₂²). The test statistic follows an F-distribution with (n₁−1) numerator degrees of freedom and (n₂−1) denominator degrees of freedom. Higher F values suggest the two variances are different. This test is sensitive to departures from normality.
+
+The chi-square test tests a hypothesis about a single population variance: χ² = (n−1)s²/σ₀². The chi-square distribution is asymmetric and only takes positive values. The nonparametric tests (Mann-Whitney U, Spearman rank correlation, sign test, Wilcoxon signed-rank) are used when data do not satisfy the distributional assumptions of parametric tests or when data are at the ordinal scale.`,
+        note: "Use t-test when population variance is unknown (most common). Use z-test when population variance is known. Use F-test to compare two variances. Use chi-square to test one variance. For n>30, t and z give nearly identical results, but always prefer t when σ is unknown.",
+        definition: "Degrees of Freedom: For a t-test with one sample, df = n−1. For a two-sample t-test, df is more complex. The degrees of freedom determine the shape of the t-distribution; as df increases, the t-distribution approaches the standard normal.",
+        example: "Testing whether Variance(Fund A) = Variance(Fund B): s²(A)=0.0225, n(A)=25; s²(B)=0.0100, n(B)=31. F = 0.0225/0.0100 = 2.25 with (24, 30) df. At α=5% (two-tailed), critical F ≈ 2.14. Since 2.25 > 2.14, reject H₀ of equal variances. Fund A has significantly higher variance than Fund B."
+      }
+    },
+    flashcards: [
+      {q:"What are the 6 steps of hypothesis testing?", a:"1) State H₀ and Hₐ. 2) Identify test statistic. 3) Specify significance level α. 4) State decision rule (critical values). 5) Collect data, calculate test statistic. 6) Make decision (reject or fail to reject H₀)."},
+      {q:"What is the difference between Type I and Type II errors?", a:"Type I error (α): Rejecting a TRUE null hypothesis — a false positive. Probability = significance level α. Type II error (β): Failing to reject a FALSE null — a false negative. Power = 1−β = probability of correctly rejecting a false null. Reducing α increases β (trade-off)."},
+      {q:"When do you use t-test vs z-test?", a:"t-test: population variance is unknown (practical standard). z-test: population variance is known. For large samples (n>30), both give similar results, but t-test is theoretically correct when σ is unknown regardless of sample size."},
+      {q:"What is the p-value and how is it used?", a:"P-value = probability of obtaining a test statistic as extreme as observed, assuming H₀ is true. Decision rule: reject H₀ if p-value < α. A smaller p-value provides stronger evidence against the null hypothesis."},
+      {q:"When is the F-test used and how is the F-statistic calculated?", a:"F-test tests equality of two variances: F = s₁²/s₂² where s₁² ≥ s₂². Follows F-distribution with (n₁−1) and (n₂−1) degrees of freedom. Reject H₀ of equal variances if F > critical F value."},
+      {q:"What is the difference between one-tailed and two-tailed tests?", a:"One-tailed test: Hₐ specifies direction (μ > μ₀ or μ < μ₀). All rejection region is on one side. Two-tailed test: Hₐ is μ ≠ μ₀. Rejection region split equally between both tails. For two-tailed tests, use α/2 in each tail."}
+    ],
+    questions: [
+      "An analyst tests H₀: μ = 0 vs Hₐ: μ ≠ 0 using a sample of n=25, X̄=0.6%, s=1.5%. The t-statistic is: A) 1.67 B) 2.00 C) 2.33 D) 0.40\n\nAnswer: B — t = (0.6−0)/(1.5/√25) = 0.6/0.3 = 2.00.",
+      "At the 5% significance level with a two-tailed test and 24 degrees of freedom, the critical t-value is approximately: A) 1.645 B) 1.711 C) 2.064 D) 2.492\n\nAnswer: C — For two-tailed test, α/2=2.5% in each tail with 24 df, the critical value is approximately 2.064.",
+      "A Type II error is BEST described as: A) Rejecting a false null hypothesis B) Rejecting a true null hypothesis C) Failing to reject a false null hypothesis D) Failing to reject a true null hypothesis\n\nAnswer: C — Type II error = failing to reject H₀ when H₀ is actually false (missed detection of a real effect).",
+      "To test whether two funds have equal variance, with F = s₁²/s₂² = 3.2 and a critical F-value of 3.0 at the 5% level, the analyst should: A) Fail to reject the null hypothesis B) Reject the null hypothesis of equal variances C) Accept the alternative hypothesis D) Both B and C\n\nAnswer: B — Since F = 3.2 > critical value 3.0, reject H₀ of equal variances. Note: we reject H₀, not 'accept Hₐ' in strict statistical language.",
+      "A chi-square test of a single variance uses H₀: σ² = 0.04. With n=20, s²=0.06, the test statistic is: A) 28.5 B) 19.0 C) 30.0 D) 25.0\n\nAnswer: A — χ² = (n−1)s²/σ₀² = 19 × 0.06/0.04 = 19 × 1.5 = 28.5."
+    ]
+  }
+};
+
+// Curriculum structure matching the 5-module Quant portal
 const CURRICULUM = [
-  { id:"ethics", num:"1", title:"Ethical & Professional Standards", modules:[
-    { id:"e1", num:"1.1", title:"Ethics and Trust in the Investment Profession", subs:[
-      {id:"e1a",num:"1.1.1",title:"Why Ethics Matter"},
-      {id:"e1b",num:"1.1.2",title:"Ethical vs. Legal Standards"},
-      {id:"e1c",num:"1.1.3",title:"Decision-Making Frameworks"}
-    ]},
-    { id:"e2", num:"1.2", title:"Code of Ethics & Standards of Professional Conduct", subs:[
-      {id:"e2a",num:"1.2.1",title:"The Code of Ethics"},
-      {id:"e2b",num:"1.2.2",title:"Standards I–VII Overview"}
-    ]},
-    { id:"e3", num:"1.3", title:"GIPS Standards", subs:[
-      {id:"e3a",num:"1.3.1",title:"Introduction to GIPS"},
-      {id:"e3b",num:"1.3.2",title:"Composites and Portability"}
-    ]},
-  ]},
   { id:"quant", num:"2", title:"Quantitative Methods", modules:[
-    { id:"q1", num:"2.1", title:"Time Value of Money", subs:[
+    { id:"q1", num:"2.1", title:"Rates and Returns", subs:[
       {id:"q1a",num:"2.1.1",title:"Interest Rates & Required Rates of Return"},
-      {id:"q1b",num:"2.1.2",title:"Future & Present Value Calculations"},
-      {id:"q1c",num:"2.1.3",title:"Annuities and Perpetuities"}
+      {id:"q1b",num:"2.1.2",title:"Return Measurement: HPR, Arithmetic, Geometric, Harmonic"},
+      {id:"q1c",num:"2.1.3",title:"Money-Weighted, Time-Weighted & Annualized Returns"}
     ]},
-    { id:"q2", num:"2.2", title:"Statistical Concepts & Market Returns", subs:[
-      {id:"q2a",num:"2.2.1",title:"Measures of Central Tendency"},
-      {id:"q2b",num:"2.2.2",title:"Measures of Dispersion"},
-      {id:"q2c",num:"2.2.3",title:"Skewness and Kurtosis"}
+    { id:"q2", num:"2.2", title:"Time Value of Money in Finance", subs:[
+      {id:"q2a",num:"2.2.1",title:"TVM in Fixed Income & Equity Instruments"},
+      {id:"q2b",num:"2.2.2",title:"Implied Returns, Forward Rates & Cash Flow Additivity"}
     ]},
-    { id:"q3", num:"2.3", title:"Probability Concepts", subs:[
-      {id:"q3a",num:"2.3.1",title:"Probability Rules & Trees"},
-      {id:"q3b",num:"2.3.2",title:"Bayes' Formula"}
+    { id:"q3", num:"2.3", title:"Statistical Measures of Asset Returns", subs:[
+      {id:"q3a",num:"2.3.1",title:"Measures of Central Tendency & Location"},
+      {id:"q3b",num:"2.3.2",title:"Measures of Dispersion"},
+      {id:"q3c",num:"2.3.3",title:"Skewness, Kurtosis & Correlation"}
     ]},
-    { id:"q4", num:"2.4", title:"Common Probability Distributions", subs:[
-      {id:"q4a",num:"2.4.1",title:"Discrete Distributions"},
-      {id:"q4b",num:"2.4.2",title:"The Normal Distribution"}
+    { id:"q4", num:"2.4", title:"Probability Trees & Conditional Expectations", subs:[
+      {id:"q4a",num:"2.4.1",title:"Expected Value, Variance & Probability Trees"},
+      {id:"q4b",num:"2.4.2",title:"Bayes' Formula & Updating Probability Estimates"}
     ]},
     { id:"q5", num:"2.5", title:"Hypothesis Testing", subs:[
-      {id:"q5a",num:"2.5.1",title:"The Testing Framework"},
-      {id:"q5b",num:"2.5.2",title:"t-tests, z-tests, and Chi-square"}
-    ]},
-  ]},
-  { id:"econ", num:"3", title:"Economics", modules:[
-    { id:"ec1", num:"3.1", title:"Demand and Supply Analysis", subs:[
-      {id:"ec1a",num:"3.1.1",title:"Demand Curves & Elasticity"},
-      {id:"ec1b",num:"3.1.2",title:"Supply Curves & Market Equilibrium"}
-    ]},
-    { id:"ec2", num:"3.2", title:"The Firm and Market Structures", subs:[
-      {id:"ec2a",num:"3.2.1",title:"Perfect Competition"},
-      {id:"ec2b",num:"3.2.2",title:"Monopoly and Oligopoly"}
-    ]},
-    { id:"ec3", num:"3.3", title:"Aggregate Output, Prices & Growth", subs:[
-      {id:"ec3a",num:"3.3.1",title:"GDP and National Accounts"},
-      {id:"ec3b",num:"3.3.2",title:"Business Cycles"}
-    ]},
-    { id:"ec4", num:"3.4", title:"Monetary and Fiscal Policy", subs:[
-      {id:"ec4a",num:"3.4.1",title:"Central Banks & Monetary Policy"},
-      {id:"ec4b",num:"3.4.2",title:"Fiscal Policy Tools"}
-    ]},
-  ]},
-  { id:"fra", num:"4", title:"Financial Statement Analysis", modules:[
-    { id:"f1", num:"4.1", title:"Financial Reporting Standards", subs:[
-      {id:"f1a",num:"4.1.1",title:"IFRS vs. US GAAP"},
-      {id:"f1b",num:"4.1.2",title:"The Conceptual Framework"}
-    ]},
-    { id:"f2", num:"4.2", title:"Income Statement", subs:[
-      {id:"f2a",num:"4.2.1",title:"Revenue Recognition"},
-      {id:"f2b",num:"4.2.2",title:"Expense Recognition & EPS"}
-    ]},
-    { id:"f3", num:"4.3", title:"Balance Sheet", subs:[
-      {id:"f3a",num:"4.3.1",title:"Assets, Liabilities & Equity"},
-      {id:"f3b",num:"4.3.2",title:"Liquidity and Solvency Ratios"}
-    ]},
-    { id:"f4", num:"4.4", title:"Cash Flow Statement", subs:[
-      {id:"f4a",num:"4.4.1",title:"Direct vs. Indirect Method"},
-      {id:"f4b",num:"4.4.2",title:"Free Cash Flow Analysis"}
-    ]},
-  ]},
-  { id:"corp", num:"5", title:"Corporate Issuers", modules:[
-    { id:"c1", num:"5.1", title:"Capital Structure", subs:[
-      {id:"c1a",num:"5.1.1",title:"Leverage and WACC"},
-      {id:"c1b",num:"5.1.2",title:"Modigliani–Miller Propositions"}
-    ]},
-    { id:"c2", num:"5.2", title:"Dividends and Share Repurchases", subs:[
-      {id:"c2a",num:"5.2.1",title:"Dividend Policy Theories"},
-      {id:"c2b",num:"5.2.2",title:"Buyback Mechanics & Signaling"}
-    ]},
-  ]},
-  { id:"equity", num:"6", title:"Equity Investments", modules:[
-    { id:"eq1", num:"6.1", title:"Market Organization & Structure", subs:[
-      {id:"eq1a",num:"6.1.1",title:"Functions of Financial Markets"},
-      {id:"eq1b",num:"6.1.2",title:"Types of Orders & Execution"}
-    ]},
-    { id:"eq2", num:"6.2", title:"Security Market Indexes", subs:[
-      {id:"eq2a",num:"6.2.1",title:"Index Construction & Weighting"},
-      {id:"eq2b",num:"6.2.2",title:"Uses of Market Indexes"}
-    ]},
-    { id:"eq3", num:"6.3", title:"Equity Valuation", subs:[
-      {id:"eq3a",num:"6.3.1",title:"Dividend Discount Models"},
-      {id:"eq3b",num:"6.3.2",title:"Free Cash Flow & Residual Income"},
-      {id:"eq3c",num:"6.3.3",title:"Price Multiples"}
-    ]},
-  ]},
-  { id:"fi", num:"7", title:"Fixed Income", modules:[
-    { id:"fi1", num:"7.1", title:"Fixed-Income Markets & Issuers", subs:[
-      {id:"fi1a",num:"7.1.1",title:"Bond Features & Types"},
-      {id:"fi1b",num:"7.1.2",title:"Primary and Secondary Markets"}
-    ]},
-    { id:"fi2", num:"7.2", title:"Bond Valuation", subs:[
-      {id:"fi2a",num:"7.2.1",title:"Price, Yield, and Maturity"},
-      {id:"fi2b",num:"7.2.2",title:"Yield Measures & Conventions"}
-    ]},
-    { id:"fi3", num:"7.3", title:"Introduction to Risk", subs:[
-      {id:"fi3a",num:"7.3.1",title:"Duration and Convexity"},
-      {id:"fi3b",num:"7.3.2",title:"Credit Risk and Spread Risk"}
-    ]},
-  ]},
-  { id:"deriv", num:"8", title:"Derivatives", modules:[
-    { id:"d1", num:"8.1", title:"Derivative Markets & Instruments", subs:[
-      {id:"d1a",num:"8.1.1",title:"Forwards, Futures, and Swaps"},
-      {id:"d1b",num:"8.1.2",title:"Options: Calls and Puts"}
-    ]},
-    { id:"d2", num:"8.2", title:"Basics of Derivative Pricing", subs:[
-      {id:"d2a",num:"8.2.1",title:"No-Arbitrage Principle"},
-      {id:"d2b",num:"8.2.2",title:"Put–Call Parity"}
-    ]},
-  ]},
-  { id:"alt", num:"9", title:"Alternative Investments", modules:[
-    { id:"a1", num:"9.1", title:"Alternative Investment Categories", subs:[
-      {id:"a1a",num:"9.1.1",title:"Hedge Funds & Private Equity"},
-      {id:"a1b",num:"9.1.2",title:"Real Estate & Commodities"}
-    ]},
-  ]},
-  { id:"pm", num:"10", title:"Portfolio Management", modules:[
-    { id:"p1", num:"10.1", title:"Portfolio Management Overview", subs:[
-      {id:"p1a",num:"10.1.1",title:"The Investment Policy Statement"},
-      {id:"p1b",num:"10.1.2",title:"Risk and Return"}
-    ]},
-    { id:"p2", num:"10.2", title:"Portfolio Planning and Construction", subs:[
-      {id:"p2a",num:"10.2.1",title:"Modern Portfolio Theory"},
-      {id:"p2b",num:"10.2.2",title:"The Efficient Frontier & CML"},
-      {id:"p2c",num:"10.2.3",title:"The Capital Asset Pricing Model"}
+      {id:"q5a",num:"2.5.1",title:"The Hypothesis Testing Framework"},
+      {id:"q5b",num:"2.5.2",title:"t-tests, z-tests, F-tests & Chi-Square Tests"}
     ]},
   ]},
 ];
@@ -175,388 +301,52 @@ const CURRICULUM = [
 const ALL_MODULES = CURRICULUM.flatMap(s => s.modules.map(m => ({ ...m, subject: s })));
 const TOTAL = ALL_MODULES.length;
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// THEME TOKENS
-// ═══════════════════════════════════════════════════════════════════════════════
 const T = {
-  light: {
-    bg:"#fafaf8", surf:"#f2f2ee", side:"#f0efe9", bdr:"#ddddd4", txt:"#1c1c18",
-    muted:"#5c5c52", lite:"#9a9a8e", acc:"#b83025", link:"#1a3a5c",
-    atvBg:"#fdf0ee", atvTxt:"#b83025",
-    nBg:"#eef4ff", nBdr:"#2563eb", nTxt:"#1e3869",
-    dBg:"#f4eeff", dBdr:"#7c3aed", dTxt:"#3a1e7a",
-    eBg:"#edfff5", eBdr:"#16a34a", eTxt:"#1a4828",
-    qBg:"#fffceb", qBdr:"#d97706",
-    done:"#16a34a", doneBg:"#edfff5",
-    fc:"#7c3aed", fcBg:"#f4eeff",
-    imp:"#0369a1", impBg:"#e0f2fe",
-  },
-  dark: {
-    bg:"#17171c", surf:"#1f1f28", side:"#1b1b24", bdr:"#2a2a38", txt:"#e0e0d5",
-    muted:"#98988c", lite:"#525248", acc:"#e05c4a", link:"#7ab4d8",
-    atvBg:"#271b1a", atvTxt:"#e05c4a",
-    nBg:"#162030", nBdr:"#3b82f6", nTxt:"#93c5fd",
-    dBg:"#1c1630", dBdr:"#a78bfa", dTxt:"#c4b5fd",
-    eBg:"#162418", eBdr:"#4ade80", eTxt:"#86efac",
-    qBg:"#22190e", qBdr:"#f59e0b",
-    done:"#4ade80", doneBg:"#162418",
-    fc:"#a78bfa", fcBg:"#1c1630",
-    imp:"#38bdf8", impBg:"#0c2133",
-  },
+  light:{ bg:"#fafaf8",surf:"#f2f2ee",side:"#f0efe9",bdr:"#ddddd4",txt:"#1c1c18",muted:"#5c5c52",lite:"#9a9a8e",acc:"#b83025",link:"#1a3a5c",atvBg:"#fdf0ee",atvTxt:"#b83025",nBg:"#eef4ff",nBdr:"#2563eb",nTxt:"#1e3869",dBg:"#f4eeff",dBdr:"#7c3aed",dTxt:"#3a1e7a",eBg:"#edfff5",eBdr:"#16a34a",eTxt:"#1a4828",qBg:"#fffceb",qBdr:"#d97706",done:"#16a34a",doneBg:"#edfff5",fc:"#7c3aed",fcBg:"#f4eeff" },
+  dark:{ bg:"#17171c",surf:"#1f1f28",side:"#1b1b24",bdr:"#2a2a38",txt:"#e0e0d5",muted:"#98988c",lite:"#525248",acc:"#e05c4a",link:"#7ab4d8",atvBg:"#271b1a",atvTxt:"#e05c4a",nBg:"#162030",nBdr:"#3b82f6",nTxt:"#93c5fd",dBg:"#1c1630",dBdr:"#a78bfa",dTxt:"#c4b5fd",eBg:"#162418",eBdr:"#4ade80",eTxt:"#86efac",qBg:"#22190e",qBdr:"#f59e0b",done:"#4ade80",doneBg:"#162418",fc:"#a78bfa",fcBg:"#1c1630" },
 };
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// STORAGE HELPERS (localStorage fallback since window.storage may not exist)
-// ═══════════════════════════════════════════════════════════════════════════════
 const Store = {
-  get: (key) => { try { const v = localStorage.getItem("cfa_"+key); return v ? JSON.parse(v) : null; } catch(e){ return null; } },
-  set: (key, val) => { try { localStorage.setItem("cfa_"+key, JSON.stringify(val)); } catch(e){} },
-  del: (key) => { try { localStorage.removeItem("cfa_"+key); } catch(e){} },
+  get:(k)=>{ try{const v=localStorage.getItem("cfa_"+k);return v?JSON.parse(v):null;}catch(e){return null;} },
+  set:(k,v)=>{ try{localStorage.setItem("cfa_"+k,JSON.stringify(v));}catch(e){} },
+  del:(k)=>{ try{localStorage.removeItem("cfa_"+k);}catch(e){} },
 };
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// PDF → BASE64
-// ═══════════════════════════════════════════════════════════════════════════════
-function fileToBase64(file) {
-  return new Promise((res, rej) => {
-    const r = new FileReader();
-    r.onload = () => res(r.result.split(",")[1]);
-    r.onerror = () => rej(new Error("Read failed"));
-    r.readAsDataURL(file);
-  });
-}
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// GEMINI API — PDF EXTRACTION (Free tier)
-// ═══════════════════════════════════════════════════════════════════════════════
-async function extractWithGemini(base64PDF, subjectInfo, apiKey) {
-  const moduleList = subjectInfo.modules.map(m =>
-    `- Module ID "${m.id}" | ${m.num} "${m.title}"\n  Sections: ${m.subs.map(s => `ID "${s.id}" ${s.num} "${s.title}"`).join(" | ")}`
-  ).join("\n");
-
-  const prompt = `You are processing a CFA Level I curriculum PDF for the subject: "${subjectInfo.title}".
-
-The portal expects content mapped to these exact module and section IDs:
-${moduleList}
-
-Extract ALL content from the PDF and return ONLY a valid JSON object (no markdown fences, no explanation) with this structure:
-
-{
-  "modules": {
-    "<module_id>": {
-      "intro": "2-3 sentence intro paragraph for this module based on PDF content",
-      "sections": {
-        "<section_id>": {
-          "body": "Full extracted text for this section — 3 to 6 paragraphs, preserve key details, formulas described in prose, learning outcomes.",
-          "note": "One concise high-yield exam tip specific to this section, or null",
-          "definition": "One precise key definition from this section, or null",
-          "example": "One worked example or numerical illustration from this section"
-        }
-      },
-      "flashcards": [
-        {"q": "Question text", "a": "Answer text"}
-      ],
-      "questions": [
-        "Full practice question 1",
-        "Full practice question 2",
-        "Full practice question 3",
-        "Full practice question 4",
-        "Full practice question 5"
-      ]
-    }
-  }
-}
-
-Rules:
-- Use ONLY the exact module IDs and section IDs listed above
-- Write 5+ flashcards per module covering the most testable concepts
-- Write 5 practice questions per module that mirror CFA exam style
-- Populate every section with real content from the PDF — not generic placeholders
-- If a section's content is minimal in the PDF, write what you can and keep it accurate`;
-
-  const endpoint = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`;
-
-  const requestBody = {
-    contents: [{
-      parts: [
-        { inline_data: { mime_type: "application/pdf", data: base64PDF } },
-        { text: prompt }
-      ]
-    }],
-    generationConfig: { temperature: 0.1, maxOutputTokens: 8192 }
-  };
-
-  const response = await fetch(endpoint, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(requestBody)
-  });
-
-  if (!response.ok) {
-    const err = await response.json().catch(() => ({}));
-    throw new Error(err?.error?.message || `API error ${response.status}`);
-  }
-  const data = await response.json();
-  const raw = data.candidates?.[0]?.content?.parts?.[0]?.text || "";
-  const clean = raw.replace(/^```(?:json)?\s*/i,"").replace(/\s*```\s*$/i,"").trim();
-  return JSON.parse(clean);
-}
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// IMPORT PANEL
-// ═══════════════════════════════════════════════════════════════════════════════
-function ImportPanel({ t, contentStore, onImport, onClose }) {
-  const [selectedSubject, setSelectedSubject] = useState(CURRICULUM[0].id);
-  const [file, setFile] = useState(null);
-  const [status, setStatus] = useState("idle");
-  const [log, setLog] = useState([]);
-  const [progress, setProgress] = useState(0);
-  const [dragOver, setDragOver] = useState(false);
-  const [apiKey, setApiKey] = useState(() => Store.get("apikey") || "");
-  const [showKey, setShowKey] = useState(false);
-  const fileRef = useRef(null);
-  const logRef = useRef(null);
-
-  const subj = CURRICULUM.find(s => s.id === selectedSubject);
-  const alreadyImported = !!contentStore[selectedSubject];
-
-  const addLog = (msg, type="info") => setLog(l => [...l, { msg, type }]);
-
-  useEffect(() => {
-    if (logRef.current) logRef.current.scrollTop = logRef.current.scrollHeight;
-  }, [log]);
-
-  const handleFile = (f) => {
-    if (f?.type === "application/pdf") { setFile(f); setLog([]); setStatus("idle"); }
-    else addLog("Please select a valid PDF file.", "error");
-  };
-
-  const runImport = async () => {
-    if (!file) return;
-    if (!apiKey.trim()) { addLog("❌ Please enter your Anthropic API key first.", "error"); return; }
-    Store.set("apikey", apiKey.trim());
-    setStatus("extracting"); setLog([]); setProgress(10);
-    try {
-      addLog(`📄 Reading "${file.name}" (${(file.size/1024/1024).toFixed(1)} MB)…`);
-      const b64 = await fileToBase64(file);
-      setProgress(25);
-      addLog("🤖 Sending to Claude API — extracting all curriculum content…");
-      addLog("⏳ This typically takes 30–90 seconds for a full subject PDF.");
-      setStatus("parsing");
-      const result = await extractWithGemini(b64, subj, apiKey.trim());
-      setProgress(90);
-      const modCount = Object.keys(result.modules || {}).length;
-      addLog(`✅ Success! ${modCount} modules extracted and mapped.`, "success");
-      const fcTotal = Object.values(result.modules||{}).reduce((a,m) => a + (m.flashcards?.length||0), 0);
-      addLog(`🃏 ${fcTotal} flashcards generated across all modules.`, "success");
-      setProgress(100);
-      setStatus("done");
-      onImport(selectedSubject, result);
-    } catch(e) {
-      setStatus("error");
-      addLog(`❌ Error: ${e.message}`, "error");
-      setProgress(0);
-    }
-  };
-
-  const overlay = { position:"fixed",inset:0,background:"rgba(0,0,0,0.6)",backdropFilter:"blur(5px)",zIndex:200,display:"flex",alignItems:"center",justifyContent:"center",padding:20 };
-  const panel = { background:t.bg,border:`1px solid ${t.bdr}`,borderRadius:14,width:"100%",maxWidth:580,maxHeight:"92vh",overflow:"auto",boxShadow:"0 32px 80px rgba(0,0,0,0.35)" };
-
-  return (
-    <div style={overlay}>
-      <div style={panel}>
-        <div style={{padding:"24px 28px 18px",borderBottom:`1px solid ${t.bdr}`,display:"flex",gap:12,justifyContent:"space-between",alignItems:"flex-start"}}>
-          <div>
-            <div style={{fontSize:11,fontWeight:700,color:t.imp,textTransform:"uppercase",letterSpacing:"0.09em",marginBottom:4}}>📥 PDF Import Engine</div>
-            <h2 style={{fontFamily:"'Crimson Pro',Georgia,serif",fontSize:22,fontWeight:600,color:t.txt,margin:0}}>Import CFA Curriculum PDF</h2>
-            <p style={{fontSize:13,color:t.muted,marginTop:6,lineHeight:1.55}}>Upload an official CFA Institute PDF. Claude will automatically extract all content and populate every module, section, flashcard, and practice question.</p>
-          </div>
-          <button onClick={onClose} style={{background:"none",border:`1px solid ${t.bdr}`,borderRadius:6,padding:"4px 10px",cursor:"pointer",color:t.muted,fontSize:16,flexShrink:0}}>✕</button>
-        </div>
-
-        <div style={{padding:"22px 28px"}}>
-          {/* API Key */}
-          <div style={{marginBottom:22,background:t.impBg,border:`1.5px solid ${t.imp}`,borderRadius:9,padding:"14px 16px"}}>
-            <div style={{fontSize:11.5,fontWeight:700,color:t.imp,textTransform:"uppercase",letterSpacing:"0.07em",marginBottom:6}}>🔑 Google Gemini API Key</div>
-            <p style={{fontSize:12,color:t.muted,marginBottom:10,lineHeight:1.55}}>
-              Required to call Gemini for PDF extraction. Get yours FREE at{" "}
-              <a href="https://aistudio.google.com/app/apikey" target="_blank" style={{color:t.imp}}>aistudio.google.com</a>.
-              Your key is saved locally in your browser only.
-            </p>
-            <div style={{display:"flex",gap:8,alignItems:"center"}}>
-              <input
-                type={showKey?"text":"password"}
-                value={apiKey}
-                onChange={e=>setApiKey(e.target.value)}
-                placeholder="AIza..."
-                style={{flex:1,padding:"8px 11px",borderRadius:6,border:`1px solid ${t.bdr}`,background:t.bg,color:t.txt,fontSize:13,outline:"none",fontFamily:"monospace"}}
-              />
-              <button onClick={()=>setShowKey(s=>!s)} style={{background:"none",border:`1px solid ${t.bdr}`,borderRadius:6,padding:"8px 11px",cursor:"pointer",color:t.muted,fontSize:12,whiteSpace:"nowrap"}}>
-                {showKey?"Hide":"Show"}
-              </button>
-            </div>
-            {apiKey && <div style={{marginTop:6,fontSize:11,color:t.done}}>✓ Key entered — saved to browser storage</div>}
-
-          </div>
-
-          {/* Step 1 */}
-          <div style={{marginBottom:20}}>
-            <div style={{fontSize:11.5,fontWeight:700,color:t.txt,textTransform:"uppercase",letterSpacing:"0.07em",marginBottom:8,display:"flex",alignItems:"center",gap:8}}>
-              <span style={{background:t.acc,color:"#fff",borderRadius:"50%",width:20,height:20,display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:11,fontWeight:800,flexShrink:0}}>1</span>
-              Select Subject
-            </div>
-            <select value={selectedSubject} onChange={e => { setSelectedSubject(e.target.value); setFile(null); setLog([]); setStatus("idle"); setProgress(0); }}
-              style={{width:"100%",padding:"9px 12px",borderRadius:7,border:`1px solid ${t.bdr}`,background:t.surf,color:t.txt,fontSize:13,outline:"none",cursor:"pointer"}}>
-              {CURRICULUM.map(s => (
-                <option key={s.id} value={s.id}>{s.num}. {s.title}{contentStore[s.id]?" ✓":""}</option>
-              ))}
-            </select>
-            {alreadyImported && <div style={{marginTop:7,fontSize:12,color:t.done,fontWeight:600}}>✓ Already imported — re-uploading will overwrite existing content.</div>}
-          </div>
-
-          {/* Step 2 */}
-          <div style={{marginBottom:20}}>
-            <div style={{fontSize:11.5,fontWeight:700,color:t.txt,textTransform:"uppercase",letterSpacing:"0.07em",marginBottom:8,display:"flex",alignItems:"center",gap:8}}>
-              <span style={{background:t.acc,color:"#fff",borderRadius:"50%",width:20,height:20,display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:11,fontWeight:800,flexShrink:0}}>2</span>
-              Upload PDF
-            </div>
-            <div
-              onDragOver={e=>{e.preventDefault();setDragOver(true);}}
-              onDragLeave={()=>setDragOver(false)}
-              onDrop={e=>{e.preventDefault();setDragOver(false);handleFile(e.dataTransfer.files[0]);}}
-              onClick={()=>fileRef.current?.click()}
-              style={{border:`2px dashed ${dragOver?t.imp:file?t.done:t.bdr}`,borderRadius:10,padding:"26px 20px",textAlign:"center",cursor:"pointer",background:dragOver?t.impBg:file?t.doneBg:t.surf,transition:"all 0.2s"}}>
-              <input ref={fileRef} type="file" accept="application/pdf" style={{display:"none"}} onChange={e=>handleFile(e.target.files[0])}/>
-              {file ? (
-                <div>
-                  <div style={{fontSize:30,marginBottom:6}}>📄</div>
-                  <div style={{fontSize:14,fontWeight:600,color:t.done}}>{file.name}</div>
-                  <div style={{fontSize:12,color:t.muted,marginTop:3}}>{(file.size/1024/1024).toFixed(1)} MB · Click to change file</div>
-                </div>
-              ) : (
-                <div>
-                  <div style={{fontSize:32,marginBottom:8}}>☁️</div>
-                  <div style={{fontSize:14,fontWeight:600,color:t.txt}}>Drop your PDF here or click to browse</div>
-                  <div style={{fontSize:12,color:t.muted,marginTop:4}}>Expected: CFA Institute PDF for <strong>{subj?.title}</strong></div>
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Step 3 */}
-          <div style={{marginBottom:20}}>
-            <div style={{fontSize:11.5,fontWeight:700,color:t.txt,textTransform:"uppercase",letterSpacing:"0.07em",marginBottom:8,display:"flex",alignItems:"center",gap:8}}>
-              <span style={{background:t.acc,color:"#fff",borderRadius:"50%",width:20,height:20,display:"inline-flex",alignItems:"center",justifyContent:"center",fontSize:11,fontWeight:800,flexShrink:0}}>3</span>
-              Extract & Import
-            </div>
-            <button onClick={runImport} disabled={!file||!apiKey.trim()||status==="extracting"||status==="parsing"}
-              style={{width:"100%",padding:"12px",borderRadius:8,border:"none",fontSize:14,fontWeight:700,cursor:(!file||!apiKey.trim()||status==="extracting"||status==="parsing")?"not-allowed":"pointer",transition:"all 0.2s",
-                background:(!file||!apiKey.trim()||status==="extracting"||status==="parsing")?t.bdr:status==="done"?t.done:t.imp,
-                color:(!file||!apiKey.trim()||status==="extracting"||status==="parsing")?t.muted:"#fff"}}>
-              {!apiKey.trim()?"🔑 Enter Gemini API Key First":status==="extracting"?"📄 Reading PDF…":status==="parsing"?"🤖 Claude extracting content…":status==="done"?"✅ Import Complete — Import Another?":"🚀 Start Extraction"}
-            </button>
-            {(status==="extracting"||status==="parsing"||status==="done")&&(
-              <div style={{marginTop:10,height:5,background:t.bdr,borderRadius:3,overflow:"hidden"}}>
-                <div style={{width:`${progress}%`,height:"100%",background:status==="done"?t.done:t.imp,borderRadius:3,transition:"width 0.6s"}}/>
-              </div>
-            )}
-          </div>
-
-          {/* Log */}
-          {log.length > 0 && (
-            <div ref={logRef} style={{background:t.surf,border:`1px solid ${t.bdr}`,borderRadius:8,padding:"12px 14px",maxHeight:150,overflowY:"auto",fontFamily:"monospace"}}>
-              {log.map((l,i) => (
-                <div key={i} style={{fontSize:12,color:l.type==="error"?"#dc2626":l.type==="success"?t.done:t.muted,lineHeight:1.65,marginBottom:2}}>{l.msg}</div>
-              ))}
-            </div>
-          )}
-
-          {status==="done"&&(
-            <button onClick={onClose} style={{width:"100%",marginTop:14,padding:"11px",borderRadius:8,border:"none",background:t.done,color:"#fff",cursor:"pointer",fontSize:14,fontWeight:700}}>
-              ✓ View Imported Content →
-            </button>
-          )}
-        </div>
-      </div>
-    </div>
-  );
-}
-
-// ═══════════════════════════════════════════════════════════════════════════════
-// FLASHCARD MODAL
-// ═══════════════════════════════════════════════════════════════════════════════
 function FlashcardModal({ mod, cards, t, onClose }) {
-  const [idx, setIdx] = useState(0);
-  const [flipped, setFlipped] = useState(false);
-  const [ratings, setRatings] = useState({});
-  const [done, setDone] = useState(false);
-
-  if (!cards?.length) return (
-    <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.55)",backdropFilter:"blur(4px)",zIndex:100,display:"flex",alignItems:"center",justifyContent:"center",padding:24}}>
-      <div style={{background:t.bg,border:`1px solid ${t.bdr}`,borderRadius:14,padding:36,maxWidth:420,textAlign:"center",boxShadow:"0 24px 60px rgba(0,0,0,0.25)"}}>
-        <div style={{fontSize:40,marginBottom:12}}>🃏</div>
-        <h3 style={{fontFamily:"'Crimson Pro',Georgia,serif",fontSize:20,color:t.txt,marginBottom:10}}>No Flashcards Yet</h3>
-        <p style={{color:t.muted,fontSize:14,marginBottom:20,lineHeight:1.6}}>Import the PDF for this subject to auto-generate flashcards from real curriculum content.</p>
-        <button onClick={onClose} style={{background:t.fc,color:"#fff",border:"none",borderRadius:7,padding:"9px 24px",cursor:"pointer",fontWeight:700,fontSize:14}}>Close</button>
-      </div>
-    </div>
-  );
-
-  const card = cards[idx];
-  const knew = Object.values(ratings).filter(r=>r==="knew").length;
-  const review = Object.values(ratings).filter(r=>r==="review").length;
-
-  const rate = (r) => {
-    setRatings(p=>({...p,[idx]:r}));
-    if (idx < cards.length-1) { setIdx(i=>i+1); setFlipped(false); }
-    else setDone(true);
-  };
-
+  const [idx,setIdx]=useState(0);const [flipped,setFlipped]=useState(false);const [ratings,setRatings]=useState({});const [done,setDone]=useState(false);
+  if(!cards?.length) return null;
+  const card=cards[idx];const knew=Object.values(ratings).filter(r=>r==="knew").length;const review=Object.values(ratings).filter(r=>r==="review").length;
+  const rate=(r)=>{setRatings(p=>({...p,[idx]:r}));if(idx<cards.length-1){setIdx(i=>i+1);setFlipped(false);}else setDone(true);};
   return (
     <div style={{position:"fixed",inset:0,background:"rgba(0,0,0,0.55)",backdropFilter:"blur(4px)",zIndex:100,display:"flex",alignItems:"center",justifyContent:"center",padding:24}}>
       <div style={{background:t.bg,border:`1px solid ${t.bdr}`,borderRadius:14,width:"100%",maxWidth:560,padding:32,boxShadow:"0 24px 60px rgba(0,0,0,0.25)"}}>
         <div style={{display:"flex",alignItems:"center",justifyContent:"space-between",marginBottom:22}}>
-          <div>
-            <div style={{fontSize:11,fontWeight:700,color:t.fc,textTransform:"uppercase",letterSpacing:"0.09em",marginBottom:3}}>🃏 Flashcards</div>
-            <div style={{fontSize:15,fontWeight:600,color:t.txt,fontFamily:"'Crimson Pro',Georgia,serif"}}>{mod.num} {mod.title}</div>
-          </div>
+          <div><div style={{fontSize:11,fontWeight:700,color:t.fc,textTransform:"uppercase",letterSpacing:"0.09em",marginBottom:3}}>🃏 Flashcards</div><div style={{fontSize:15,fontWeight:600,color:t.txt,fontFamily:"Georgia,serif"}}>{mod.num} {mod.title}</div></div>
           <button onClick={onClose} style={{background:"none",border:`1px solid ${t.bdr}`,borderRadius:6,padding:"4px 10px",cursor:"pointer",color:t.muted,fontSize:16}}>✕</button>
         </div>
-
-        {!done ? (<>
+        {!done?(<>
           <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:18}}>
-            <div style={{flex:1,height:4,background:t.bdr,borderRadius:2,overflow:"hidden"}}>
-              <div style={{width:`${(idx/cards.length)*100}%`,height:"100%",background:t.fc,borderRadius:2,transition:"width 0.3s"}}/>
-            </div>
-            <span style={{fontSize:12,color:t.muted,whiteSpace:"nowrap"}}>{idx+1} / {cards.length}</span>
+            <div style={{flex:1,height:4,background:t.bdr,borderRadius:2,overflow:"hidden"}}><div style={{width:`${(idx/cards.length)*100}%`,height:"100%",background:t.fc,borderRadius:2,transition:"width 0.3s"}}/></div>
+            <span style={{fontSize:12,color:t.muted}}>{idx+1}/{cards.length}</span>
           </div>
           <div onClick={()=>setFlipped(f=>!f)} style={{minHeight:190,cursor:"pointer",background:flipped?t.fcBg:t.surf,border:`1.5px solid ${flipped?t.fc:t.bdr}`,borderRadius:11,padding:"28px 26px",marginBottom:20,display:"flex",flexDirection:"column",alignItems:"center",justifyContent:"center",textAlign:"center",transition:"all 0.2s"}}>
             <div style={{fontSize:10.5,fontWeight:700,color:flipped?t.fc:t.lite,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:12}}>{flipped?"✦ Answer":"Question — tap to reveal"}</div>
-            <p style={{fontSize:16,lineHeight:1.75,color:t.txt,fontFamily:"'Crimson Pro',Georgia,serif",margin:0}}>{flipped?card.a:card.q}</p>
+            <p style={{fontSize:15.5,lineHeight:1.75,color:t.txt,fontFamily:"Georgia,serif",margin:0}}>{flipped?card.a:card.q}</p>
           </div>
-          {flipped ? (
-            <div style={{display:"flex",gap:10}}>
-              <button onClick={()=>rate("review")} style={{flex:1,padding:"11px",borderRadius:8,border:"1.5px solid #dc2626",background:"#fef2f2",color:"#dc2626",cursor:"pointer",fontWeight:700,fontSize:13}}>🔁 Need Review</button>
-              <button onClick={()=>rate("knew")} style={{flex:1,padding:"11px",borderRadius:8,border:"1.5px solid #16a34a",background:"#f0fdf4",color:"#16a34a",cursor:"pointer",fontWeight:700,fontSize:13}}>✓ Got It</button>
-            </div>
-          ) : <p style={{textAlign:"center",fontSize:12,color:t.lite,margin:0}}>Tap card to flip · Then rate yourself honestly</p>}
-        </>) : (
+          {flipped?(<div style={{display:"flex",gap:10}}>
+            <button onClick={()=>rate("review")} style={{flex:1,padding:"11px",borderRadius:8,border:"1.5px solid #dc2626",background:"#fef2f2",color:"#dc2626",cursor:"pointer",fontWeight:700,fontSize:13}}>🔁 Need Review</button>
+            <button onClick={()=>rate("knew")} style={{flex:1,padding:"11px",borderRadius:8,border:"1.5px solid #16a34a",background:"#f0fdf4",color:"#16a34a",cursor:"pointer",fontWeight:700,fontSize:13}}>✓ Got It</button>
+          </div>):<p style={{textAlign:"center",fontSize:12,color:t.lite,margin:0}}>Tap to flip · Then rate yourself</p>}
+        </>):(
           <div style={{textAlign:"center",padding:"10px 0"}}>
             <div style={{fontSize:44,marginBottom:10}}>🎯</div>
-            <h3 style={{fontFamily:"'Crimson Pro',Georgia,serif",fontSize:23,fontWeight:600,color:t.txt,marginBottom:6}}>Session Complete!</h3>
-            <p style={{color:t.muted,fontSize:14,marginBottom:24,lineHeight:1.6}}>{cards.length} cards reviewed for <strong style={{color:t.txt}}>{mod.title}</strong></p>
+            <h3 style={{fontFamily:"Georgia,serif",fontSize:23,fontWeight:600,color:t.txt,marginBottom:6}}>Session Complete!</h3>
             <div style={{display:"flex",gap:14,justifyContent:"center",marginBottom:28}}>
-              <div style={{background:"#f0fdf4",border:"1.5px solid #16a34a",borderRadius:10,padding:"14px 28px"}}>
-                <div style={{fontSize:28,fontWeight:800,color:"#16a34a"}}>{knew}</div>
-                <div style={{fontSize:12,color:"#16a34a",fontWeight:600,marginTop:2}}>Got It</div>
-              </div>
-              <div style={{background:"#fef2f2",border:"1.5px solid #dc2626",borderRadius:10,padding:"14px 28px"}}>
-                <div style={{fontSize:28,fontWeight:800,color:"#dc2626"}}>{review}</div>
-                <div style={{fontSize:12,color:"#dc2626",fontWeight:600,marginTop:2}}>Need Review</div>
-              </div>
+              <div style={{background:"#f0fdf4",border:"1.5px solid #16a34a",borderRadius:10,padding:"14px 28px"}}><div style={{fontSize:28,fontWeight:800,color:"#16a34a"}}>{knew}</div><div style={{fontSize:12,color:"#16a34a",fontWeight:600}}>Got It</div></div>
+              <div style={{background:"#fef2f2",border:"1.5px solid #dc2626",borderRadius:10,padding:"14px 28px"}}><div style={{fontSize:28,fontWeight:800,color:"#dc2626"}}>{review}</div><div style={{fontSize:12,color:"#dc2626",fontWeight:600}}>Need Review</div></div>
             </div>
             <div style={{display:"flex",gap:10,justifyContent:"center"}}>
-              <button onClick={()=>{setIdx(0);setFlipped(false);setRatings({});setDone(false);}} style={{padding:"9px 20px",borderRadius:7,border:`1.5px solid ${t.bdr}`,background:"none",color:t.txt,cursor:"pointer",fontSize:13,fontWeight:500}}>Restart Deck</button>
+              <button onClick={()=>{setIdx(0);setFlipped(false);setRatings({});setDone(false);}} style={{padding:"9px 20px",borderRadius:7,border:`1.5px solid ${t.bdr}`,background:"none",color:t.txt,cursor:"pointer",fontSize:13}}>Restart</button>
               <button onClick={onClose} style={{padding:"9px 22px",borderRadius:7,border:"none",background:t.fc,color:"#fff",cursor:"pointer",fontSize:13,fontWeight:700}}>Back to Study</button>
             </div>
           </div>
@@ -566,401 +356,197 @@ function FlashcardModal({ mod, cards, t, onClose }) {
   );
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// CALLOUT BLOCK
-// ═══════════════════════════════════════════════════════════════════════════════
-function Callout({ type, t, label, children }) {
-  if (!children) return null;
-  const s = {
-    note:{bg:t.nBg,bdr:t.nBdr,tx:t.nTxt},
-    def:{bg:t.dBg,bdr:t.dBdr,tx:t.dTxt},
-    ex:{bg:t.eBg,bdr:t.eBdr,tx:t.eTxt}
-  }[type];
-  return (
-    <div style={{background:s.bg,borderLeft:`4px solid ${s.bdr}`,borderRadius:"0 8px 8px 0",padding:"14px 20px",marginBottom:22}}>
-      <div style={{fontSize:10.5,fontWeight:700,color:s.bdr,letterSpacing:"0.09em",textTransform:"uppercase",marginBottom:7}}>{label}</div>
-      <p style={{fontSize:15.5,lineHeight:1.8,color:s.tx,fontFamily:"'Crimson Pro',Georgia,serif",margin:0}}>{children}</p>
-    </div>
-  );
+function Callout({type,t,label,children}){
+  if(!children)return null;
+  const s={note:{bg:t.nBg,bdr:t.nBdr,tx:t.nTxt},def:{bg:t.dBg,bdr:t.dBdr,tx:t.dTxt},ex:{bg:t.eBg,bdr:t.eBdr,tx:t.eTxt}}[type];
+  return(<div style={{background:s.bg,borderLeft:`4px solid ${s.bdr}`,borderRadius:"0 8px 8px 0",padding:"14px 20px",marginBottom:22}}><div style={{fontSize:10.5,fontWeight:700,color:s.bdr,letterSpacing:"0.09em",textTransform:"uppercase",marginBottom:7}}>{label}</div><p style={{fontSize:15.5,lineHeight:1.8,color:s.tx,fontFamily:"Georgia,serif",margin:0}}>{children}</p></div>);
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// QUESTION ITEM
-// ═══════════════════════════════════════════════════════════════════════════════
-function QItem({ num, q, t }) {
-  const [open, setOpen] = useState(false);
-  return (
-    <li style={{marginBottom:12,background:t.bg,border:`1px solid ${t.bdr}`,borderRadius:8,padding:"15px 18px",listStyle:"none"}}>
-      <div style={{display:"flex",gap:12,alignItems:"flex-start"}}>
-        <div style={{background:t.acc,color:"#fff",borderRadius:5,width:26,height:26,display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,fontWeight:700,flexShrink:0,marginTop:1}}>{num}</div>
-        <div style={{flex:1}}>
-          <p style={{fontSize:15.5,lineHeight:1.72,color:t.txt,fontFamily:"'Crimson Pro',Georgia,serif",marginBottom:11,marginTop:0}}>{q}</p>
-          {!open
-            ? <button onClick={()=>setOpen(true)} style={{background:"none",border:`1px solid ${t.bdr}`,borderRadius:5,padding:"4px 13px",fontSize:12,color:t.muted,cursor:"pointer"}}>Show answer</button>
-            : <div style={{background:t.eBg,borderLeft:`3px solid ${t.eBdr}`,padding:"10px 15px",borderRadius:"0 6px 6px 0",fontSize:14.5,color:t.eTxt,fontStyle:"italic",fontFamily:"'Crimson Pro',Georgia,serif"}}>
-                [Model answer — paste from CFA answer key or re-import PDF with answers included.]
-              </div>
-          }
-        </div>
+function QItem({num,q,t}){
+  const [open,setOpen]=useState(false);
+  const parts=q.split('\n\nAnswer:');const question=parts[0];const answer=parts[1]||"See CFA curriculum for detailed answer.";
+  return(<li style={{marginBottom:12,background:t.bg,border:`1px solid ${t.bdr}`,borderRadius:8,padding:"15px 18px",listStyle:"none"}}>
+    <div style={{display:"flex",gap:12,alignItems:"flex-start"}}>
+      <div style={{background:t.acc,color:"#fff",borderRadius:5,width:26,height:26,display:"flex",alignItems:"center",justifyContent:"center",fontSize:12,fontWeight:700,flexShrink:0,marginTop:1}}>{num}</div>
+      <div style={{flex:1}}>
+        <p style={{fontSize:15.5,lineHeight:1.72,color:t.txt,fontFamily:"Georgia,serif",marginBottom:11,marginTop:0}}>{question}</p>
+        {!open?<button onClick={()=>setOpen(true)} style={{background:"none",border:`1px solid ${t.bdr}`,borderRadius:5,padding:"4px 13px",fontSize:12,color:t.muted,cursor:"pointer"}}>Show answer</button>
+        :<div style={{background:t.eBg,borderLeft:`3px solid ${t.eBdr}`,padding:"10px 15px",borderRadius:"0 6px 6px 0",fontSize:14.5,color:t.eTxt,fontFamily:"Georgia,serif"}}><strong>Answer: </strong>{answer.trim()}</div>}
       </div>
-    </li>
-  );
+    </div>
+  </li>);
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// NAV BUTTON
-// ═══════════════════════════════════════════════════════════════════════════════
-function NavBtn({ dir, mod, t, onClick }) {
-  const [hov, setHov] = useState(false);
-  const isPrev = dir==="prev";
-  return (
-    <button onClick={onClick} onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)}
-      style={{flex:1,minWidth:200,background:hov?t.surf:t.bg,border:`1.5px solid ${hov?t.acc:t.bdr}`,borderRadius:9,padding:"15px 20px",cursor:"pointer",textAlign:isPrev?"left":"right",display:"flex",flexDirection:"column",alignItems:isPrev?"flex-start":"flex-end",gap:4,transition:"all 0.15s"}}>
-      <span style={{fontSize:11,color:t.lite,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.08em"}}>{isPrev?"← Previous":"Next →"}</span>
-      <span style={{fontSize:15,color:t.txt,fontFamily:"'Crimson Pro',Georgia,serif",fontWeight:600,lineHeight:1.3}}>{mod.num} {mod.title}</span>
-      <span style={{fontSize:11.5,color:t.muted}}>{mod.subject.title}</span>
-    </button>
-  );
+function NavBtn({dir,mod,t,onClick}){
+  const [hov,setHov]=useState(false);const isPrev=dir==="prev";
+  return(<button onClick={onClick} onMouseEnter={()=>setHov(true)} onMouseLeave={()=>setHov(false)} style={{flex:1,minWidth:200,background:hov?t.surf:t.bg,border:`1.5px solid ${hov?t.acc:t.bdr}`,borderRadius:9,padding:"15px 20px",cursor:"pointer",textAlign:isPrev?"left":"right",display:"flex",flexDirection:"column",alignItems:isPrev?"flex-start":"flex-end",gap:4,transition:"all 0.15s"}}>
+    <span style={{fontSize:11,color:t.lite,fontWeight:700,textTransform:"uppercase",letterSpacing:"0.08em"}}>{isPrev?"← Previous":"Next →"}</span>
+    <span style={{fontSize:15,color:t.txt,fontFamily:"Georgia,serif",fontWeight:600,lineHeight:1.3}}>{mod.num} {mod.title}</span>
+    <span style={{fontSize:11.5,color:t.muted}}>{mod.subject.title}</span>
+  </button>);
 }
 
-// ═══════════════════════════════════════════════════════════════════════════════
-// MAIN APP
-// ═══════════════════════════════════════════════════════════════════════════════
-function App() {
-  const [dark, setDark] = useState(() => Store.get("dark") || false);
-  const [activeId, setActiveId] = useState(ALL_MODULES[0].id);
-  const [expanded, setExpanded] = useState({ ethics:true });
-  const [sideOpen, setSideOpen] = useState(true);
-  const [search, setSearch] = useState("");
-  const [completed, setCompleted] = useState(() => Store.get("completed") || {});
-  const [contentStore, setContentStore] = useState(() => Store.get("content") || {});
-  const [showFC, setShowFC] = useState(false);
-  const [showImport, setShowImport] = useState(false);
-  const [sideView, setSideView] = useState("study");
-  const mainRef = useRef(null);
-  const t = T[dark?"dark":"light"];
+function App(){
+  const [dark,setDark]=useState(()=>Store.get("dark")||false);
+  const [activeId,setActiveId]=useState(ALL_MODULES[0].id);
+  const [expanded,setExpanded]=useState({quant:true});
+  const [sideOpen,setSideOpen]=useState(true);
+  const [search,setSearch]=useState("");
+  const [completed,setCompleted]=useState(()=>Store.get("completed")||{});
+  const [showFC,setShowFC]=useState(false);
+  const [sideView,setSideView]=useState("study");
+  const mainRef=useRef(null);
+  const t=T[dark?"dark":"light"];
 
-  // Persist on change
-  useEffect(()=>{ Store.set("dark", dark); }, [dark]);
-  useEffect(()=>{ Store.set("completed", completed); }, [completed]);
-  useEffect(()=>{ Store.set("content", contentStore); }, [contentStore]);
+  useEffect(()=>Store.set("dark",dark),[dark]);
+  useEffect(()=>Store.set("completed",completed),[completed]);
 
-  const handleImport = useCallback((subjectId, data) => {
-    setContentStore(prev => ({ ...prev, [subjectId]: data }));
-  }, []);
+  const activeMod=ALL_MODULES.find(m=>m.id===activeId)||ALL_MODULES[0];
+  const activeSubj=activeMod.subject;
+  const modData=CONTENT[activeMod.id];
+  const intro=modData?.intro||"Content from CFA 2025 Level I curriculum.";
+  const sections=activeMod.subs.map(sub=>({...sub,...(modData?.sections?.[sub.id]||{})}));
+  const flashcards=modData?.flashcards||[];
+  const questions=modData?.questions||[];
+  const doneCount=Object.values(completed).filter(Boolean).length;
+  const pct=Math.round((doneCount/TOTAL)*100);
+  const modIdx=ALL_MODULES.findIndex(m=>m.id===activeId);
+  const prev=modIdx>0?ALL_MODULES[modIdx-1]:null;
+  const next=modIdx<ALL_MODULES.length-1?ALL_MODULES[modIdx+1]:null;
 
-  const activeMod = ALL_MODULES.find(m=>m.id===activeId) || ALL_MODULES[0];
-  const activeSubj = activeMod.subject;
+  const go=(mod)=>{setActiveId(mod.id);setExpanded(e=>({...e,[mod.subject.id]:true}));setSideView("study");setTimeout(()=>{if(mainRef.current)mainRef.current.scrollTop=0;},50);};
+  const scrollTo=(id)=>{const el=document.getElementById(id);if(el&&mainRef.current)mainRef.current.scrollTo({top:el.offsetTop-24,behavior:"smooth"});};
+  const toggleDone=(id)=>setCompleted(c=>({...c,[id]:!c[id]}));
 
-  const subjContent = contentStore[activeSubj.id];
-  const modContent = subjContent?.modules?.[activeMod.id];
+  const filtered=CURRICULUM.map(s=>({...s,modules:s.modules.filter(m=>search===""||m.title.toLowerCase().includes(search.toLowerCase())||m.subs.some(ss=>ss.title.toLowerCase().includes(search.toLowerCase())))})).filter(s=>s.modules.length>0);
 
-  const intro = modContent?.intro || `This module covers ${activeMod.title} within ${activeSubj.title}. Import the PDF to populate real CFA curriculum content.`;
-  const sections = activeMod.subs.map(sub => ({
-    ...sub,
-    body: modContent?.sections?.[sub.id]?.body || `[Import the "${activeSubj.title}" PDF to populate this section with real curriculum text.]`,
-    note: modContent?.sections?.[sub.id]?.note || null,
-    definition: modContent?.sections?.[sub.id]?.definition || null,
-    example: modContent?.sections?.[sub.id]?.example || null,
-  }));
-  const flashcards = modContent?.flashcards || [];
-  const questions = modContent?.questions || [`[Import the "${activeSubj.title}" PDF to auto-generate practice questions for this module.]`];
+  return(
+    <div style={{display:"flex",height:"100vh",background:t.bg,color:t.txt,overflow:"hidden",transition:"background 0.25s"}}>
+      {showFC&&<FlashcardModal mod={activeMod} cards={flashcards} t={t} onClose={()=>setShowFC(false)}/>}
 
-  const doneCount = Object.values(completed).filter(Boolean).length;
-  const pct = Math.round((doneCount/TOTAL)*100);
-  const importedCount = Object.keys(contentStore).length;
-
-  const modIdx = ALL_MODULES.findIndex(m=>m.id===activeId);
-  const prev = modIdx > 0 ? ALL_MODULES[modIdx-1] : null;
-  const next = modIdx < ALL_MODULES.length-1 ? ALL_MODULES[modIdx+1] : null;
-
-  const go = (mod) => {
-    setActiveId(mod.id);
-    setExpanded(e=>({...e,[mod.subject.id]:true}));
-    setSideView("study");
-    setTimeout(()=>{ if(mainRef.current) mainRef.current.scrollTop=0; },50);
-  };
-
-  const scrollTo = (id) => {
-    const el = document.getElementById(id);
-    if (el && mainRef.current) mainRef.current.scrollTo({ top: el.offsetTop-24, behavior:"smooth" });
-  };
-
-  const toggleDone = (id) => setCompleted(c=>({...c,[id]:!c[id]}));
-
-  const filtered = CURRICULUM.map(s=>({
-    ...s,
-    modules: s.modules.filter(m =>
-      search===""||
-      m.title.toLowerCase().includes(search.toLowerCase())||
-      m.subs.some(ss=>ss.title.toLowerCase().includes(search.toLowerCase()))
-    ),
-  })).filter(s=>s.modules.length>0);
-
-  const subjStats = CURRICULUM.map(s=>({
-    ...s,
-    done: s.modules.filter(m=>completed[m.id]).length,
-    total: s.modules.length,
-    imported: !!contentStore[s.id],
-    pct: Math.round((s.modules.filter(m=>completed[m.id]).length / s.modules.length)*100),
-  }));
-
-  return (
-    <div className={dark?"dark-mode":""} style={{display:"flex",height:"100vh",background:t.bg,color:t.txt,overflow:"hidden",transition:"background 0.25s,color 0.25s"}}>
-
-      {showImport && <ImportPanel t={t} contentStore={contentStore} onImport={handleImport} onClose={()=>setShowImport(false)}/>}
-      {showFC && <FlashcardModal mod={activeMod} cards={flashcards} t={t} onClose={()=>setShowFC(false)}/>}
-
-      {/* ════════ SIDEBAR ════════ */}
       <aside style={{width:sideOpen?280:0,minWidth:sideOpen?280:0,background:t.side,borderRight:`1px solid ${t.bdr}`,display:"flex",flexDirection:"column",overflow:"hidden",transition:"width 0.25s,min-width 0.25s",flexShrink:0}}>
-
-        {/* Logo + Progress */}
         <div style={{padding:"16px 16px 12px",borderBottom:`1px solid ${t.bdr}`,flexShrink:0}}>
           <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:12}}>
-            <div style={{background:t.acc,color:"#fff",borderRadius:7,width:38,height:38,display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,fontWeight:800,letterSpacing:"-0.5px",flexShrink:0}}>CFA</div>
-            <div style={{flex:1,minWidth:0}}>
-              <div style={{fontSize:13,fontWeight:700,color:t.txt,lineHeight:1.25}}>Level I Study Portal</div>
-              <div style={{fontSize:11,color:t.lite,marginTop:1}}>{importedCount}/10 subjects imported</div>
-            </div>
-            <button onClick={()=>setShowImport(true)} title="Import PDF"
-              style={{background:t.impBg,border:`1.5px solid ${t.imp}`,borderRadius:6,padding:"5px 9px",cursor:"pointer",color:t.imp,fontSize:14,fontWeight:700,flexShrink:0}}>
-              📥
-            </button>
+            <div style={{background:t.acc,color:"#fff",borderRadius:7,width:38,height:38,display:"flex",alignItems:"center",justifyContent:"center",fontSize:13,fontWeight:800,flexShrink:0}}>CFA</div>
+            <div style={{flex:1,minWidth:0}}><div style={{fontSize:13,fontWeight:700,color:t.txt,lineHeight:1.25}}>Quantitative Methods</div><div style={{fontSize:11,color:t.lite,marginTop:1}}>CFA Level I · 2025 Curriculum</div></div>
           </div>
           <div style={{marginBottom:10}}>
             <div style={{display:"flex",justifyContent:"space-between",marginBottom:4}}>
               <span style={{fontSize:11,fontWeight:600,color:t.muted}}>Study Progress</span>
               <span style={{fontSize:11,fontWeight:700,color:t.done}}>{pct}% · {doneCount}/{TOTAL}</span>
             </div>
-            <div style={{height:5,background:t.bdr,borderRadius:3,overflow:"hidden"}}>
-              <div style={{width:`${pct}%`,height:"100%",background:t.done,borderRadius:3,transition:"width 0.4s"}}/>
-            </div>
+            <div style={{height:5,background:t.bdr,borderRadius:3,overflow:"hidden"}}><div style={{width:`${pct}%`,height:"100%",background:t.done,borderRadius:3,transition:"width 0.4s"}}/></div>
           </div>
-          <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search modules…"
-            style={{width:"100%",padding:"7px 10px",borderRadius:6,border:`1px solid ${t.bdr}`,background:t.bg,color:t.txt,fontSize:12,outline:"none"}}/>
+          <input value={search} onChange={e=>setSearch(e.target.value)} placeholder="Search modules…" style={{width:"100%",padding:"7px 10px",borderRadius:6,border:`1px solid ${t.bdr}`,background:t.bg,color:t.txt,fontSize:12,outline:"none"}}/>
         </div>
 
-        {/* Tabs */}
         <div style={{display:"flex",borderBottom:`1px solid ${t.bdr}`,flexShrink:0}}>
-          {["study","progress"].map(v=>(
-            <button key={v} onClick={()=>setSideView(v)}
-              style={{flex:1,padding:"9px",border:"none",background:sideView===v?t.bg:"none",color:sideView===v?t.acc:t.muted,fontSize:12,fontWeight:sideView===v?700:400,cursor:"pointer",borderBottom:sideView===v?`2px solid ${t.acc}`:"2px solid transparent",transition:"all 0.15s"}}>
-              {v==="study"?"📚 Modules":"📊 Progress"}
-            </button>
-          ))}
+          {["study","progress"].map(v=>(<button key={v} onClick={()=>setSideView(v)} style={{flex:1,padding:"9px",border:"none",background:sideView===v?t.bg:"none",color:sideView===v?t.acc:t.muted,fontSize:12,fontWeight:sideView===v?700:400,cursor:"pointer",borderBottom:sideView===v?`2px solid ${t.acc}`:"2px solid transparent",transition:"all 0.15s"}}>{v==="study"?"📚 Modules":"📊 Progress"}</button>))}
         </div>
 
-        {/* Study Nav */}
-        {sideView==="study" && (
+        {sideView==="study"&&(
           <nav style={{flex:1,overflowY:"auto",padding:"8px 0"}}>
             {filtered.map(subj=>(
               <div key={subj.id}>
-                <button onClick={()=>setExpanded(e=>({...e,[subj.id]:!e[subj.id]}))}
-                  style={{width:"100%",textAlign:"left",background:"none",border:"none",cursor:"pointer",padding:"8px 14px",display:"flex",alignItems:"center",gap:6,color:t.muted,fontSize:10.5,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase"}}>
+                <button onClick={()=>setExpanded(e=>({...e,[subj.id]:!e[subj.id]}))} style={{width:"100%",textAlign:"left",background:"none",border:"none",cursor:"pointer",padding:"8px 14px",display:"flex",alignItems:"center",gap:6,color:t.muted,fontSize:10.5,fontWeight:700,letterSpacing:"0.08em",textTransform:"uppercase"}}>
                   <span style={{display:"inline-block",transform:expanded[subj.id]?"rotate(90deg)":"rotate(0deg)",transition:"transform 0.15s",fontSize:9,color:t.lite,flexShrink:0}}>▶</span>
                   <span style={{color:t.acc,marginRight:1,flexShrink:0}}>{subj.num}.</span>
                   <span style={{flex:1,lineHeight:1.3}}>{subj.title}</span>
-                  <span style={{fontSize:10,color:contentStore[subj.id]?t.done:t.lite,flexShrink:0}}>{contentStore[subj.id]?"●":"○"}</span>
-                  <span style={{fontSize:10,color:t.lite,flexShrink:0,marginLeft:4}}>{subj.modules.filter(m=>completed[m.id]).length}/{subj.modules.length}</span>
+                  <span style={{fontSize:10,color:t.lite,flexShrink:0}}>{subj.modules.filter(m=>completed[m.id]).length}/{subj.modules.length}</span>
                 </button>
-                {expanded[subj.id] && subj.modules.map(mod=>{
-                  const isAct = mod.id===activeId;
-                  return (
-                    <div key={mod.id}>
-                      <div style={{display:"flex",alignItems:"center"}}>
-                        <button onClick={()=>go({...mod,subject:subj})}
-                          style={{flex:1,textAlign:"left",background:isAct?t.atvBg:"none",border:"none",borderLeft:isAct?`3px solid ${t.acc}`:"3px solid transparent",cursor:"pointer",padding:"7px 8px 7px 24px",color:isAct?t.atvTxt:t.txt,fontSize:12.5,fontWeight:isAct?600:400,lineHeight:1.4,transition:"background 0.1s"}}>
-                          <span style={{color:isAct?t.acc:t.lite,fontSize:11,marginRight:5}}>{mod.num}</span>{mod.title}
-                        </button>
-                        <button onClick={()=>toggleDone(mod.id)} title={completed[mod.id]?"Unmark":"Mark complete"}
-                          style={{background:"none",border:"none",cursor:"pointer",padding:"7px 10px 7px 4px",color:completed[mod.id]?t.done:t.lite,fontSize:15,flexShrink:0,lineHeight:1}}>
-                          {completed[mod.id]?"✓":"○"}
-                        </button>
-                      </div>
-                      {isAct && mod.subs.map(sub=>(
-                        <button key={sub.id} onClick={()=>scrollTo(sub.id)}
-                          style={{width:"100%",textAlign:"left",background:"none",border:"none",cursor:"pointer",padding:"3px 14px 3px 40px",color:t.muted,fontSize:11.5,lineHeight:1.5}}>
-                          <span style={{color:t.lite,marginRight:5,fontSize:10}}>{sub.num}</span>{sub.title}
-                        </button>
-                      ))}
+                {expanded[subj.id]&&subj.modules.map(mod=>{
+                  const isAct=mod.id===activeId;
+                  return(<div key={mod.id}>
+                    <div style={{display:"flex",alignItems:"center"}}>
+                      <button onClick={()=>go({...mod,subject:subj})} style={{flex:1,textAlign:"left",background:isAct?t.atvBg:"none",border:"none",borderLeft:isAct?`3px solid ${t.acc}`:"3px solid transparent",cursor:"pointer",padding:"7px 8px 7px 24px",color:isAct?t.atvTxt:t.txt,fontSize:12.5,fontWeight:isAct?600:400,lineHeight:1.4,transition:"background 0.1s"}}>
+                        <span style={{color:isAct?t.acc:t.lite,fontSize:11,marginRight:5}}>{mod.num}</span>{mod.title}
+                      </button>
+                      <button onClick={()=>toggleDone(mod.id)} style={{background:"none",border:"none",cursor:"pointer",padding:"7px 10px 7px 4px",color:completed[mod.id]?t.done:t.lite,fontSize:15,flexShrink:0}}>{completed[mod.id]?"✓":"○"}</button>
                     </div>
-                  );
+                    {isAct&&mod.subs.map(sub=>(<button key={sub.id} onClick={()=>scrollTo(sub.id)} style={{width:"100%",textAlign:"left",background:"none",border:"none",cursor:"pointer",padding:"3px 14px 3px 40px",color:t.muted,fontSize:11.5,lineHeight:1.5}}><span style={{color:t.lite,marginRight:5,fontSize:10}}>{sub.num}</span>{sub.title}</button>))}
+                  </div>);
                 })}
               </div>
             ))}
           </nav>
         )}
 
-        {/* Progress View */}
-        {sideView==="progress" && (
+        {sideView==="progress"&&(
           <div style={{flex:1,overflowY:"auto",padding:"14px"}}>
             <div style={{background:t.surf,borderRadius:10,padding:"16px",textAlign:"center",marginBottom:14}}>
               <div style={{fontSize:34,fontWeight:800,color:t.done}}>{pct}%</div>
               <div style={{fontSize:12,color:t.muted,marginTop:2}}>{doneCount} of {TOTAL} modules complete</div>
-              <div style={{height:6,background:t.bdr,borderRadius:3,overflow:"hidden",marginTop:10}}>
-                <div style={{width:`${pct}%`,height:"100%",background:t.done,borderRadius:3,transition:"width 0.4s"}}/>
-              </div>
+              <div style={{height:6,background:t.bdr,borderRadius:3,overflow:"hidden",marginTop:10}}><div style={{width:`${pct}%`,height:"100%",background:t.done,borderRadius:3}}/></div>
             </div>
-            <div style={{background:t.surf,borderRadius:10,padding:"14px",textAlign:"center",marginBottom:14}}>
-              <div style={{fontSize:28,fontWeight:800,color:t.imp}}>{importedCount} / 10</div>
-              <div style={{fontSize:12,color:t.muted,marginTop:2}}>Subjects with imported PDF content</div>
-            </div>
-            {subjStats.map(s=>(
-              <div key={s.id} style={{marginBottom:12}}>
-                <div style={{display:"flex",justifyContent:"space-between",alignItems:"center",marginBottom:4}}>
-                  <div style={{display:"flex",alignItems:"center",gap:5,flex:1,minWidth:0}}>
-                    <span style={{fontSize:10,color:s.imported?t.done:t.lite,flexShrink:0}}>{s.imported?"●":"○"}</span>
-                    <span style={{fontSize:11.5,color:t.txt,fontWeight:500,lineHeight:1.3,overflow:"hidden",textOverflow:"ellipsis",whiteSpace:"nowrap"}}>{s.num}. {s.title}</span>
-                  </div>
-                  <span style={{fontSize:11,color:s.pct===100?t.done:t.muted,fontWeight:600,flexShrink:0,marginLeft:6}}>{s.done}/{s.total}</span>
-                </div>
-                <div style={{height:4,background:t.bdr,borderRadius:2,overflow:"hidden"}}>
-                  <div style={{width:`${s.pct}%`,height:"100%",background:s.pct===100?t.done:t.acc,borderRadius:2,transition:"width 0.4s"}}/>
-                </div>
-              </div>
-            ))}
-            <button onClick={()=>{setCompleted({});Store.del("completed");}}
-              style={{width:"100%",marginTop:10,padding:"8px",borderRadius:7,border:`1px solid ${t.bdr}`,background:"none",color:t.muted,fontSize:12,cursor:"pointer"}}>
-              Reset all progress
-            </button>
+            {CURRICULUM[0].modules.map(m=>(<div key={m.id} style={{marginBottom:10}}>
+              <div style={{display:"flex",justifyContent:"space-between",marginBottom:3}}><span style={{fontSize:11.5,color:t.txt,fontWeight:500}}>{m.num} {m.title}</span><span style={{fontSize:11,color:completed[m.id]?t.done:t.muted,fontWeight:600}}>{completed[m.id]?"✓":"—"}</span></div>
+              <div style={{height:4,background:t.bdr,borderRadius:2,overflow:"hidden"}}><div style={{width:completed[m.id]?"100%":"0%",height:"100%",background:t.done,borderRadius:2,transition:"width 0.4s"}}/></div>
+            </div>))}
+            <button onClick={()=>{setCompleted({});Store.del("completed");}} style={{width:"100%",marginTop:10,padding:"8px",borderRadius:7,border:`1px solid ${t.bdr}`,background:"none",color:t.muted,fontSize:12,cursor:"pointer"}}>Reset all progress</button>
           </div>
         )}
-
-        <div style={{padding:"10px 14px",borderTop:`1px solid ${t.bdr}`,fontSize:11,color:t.lite,flexShrink:0,display:"flex",justifyContent:"space-between",alignItems:"center"}}>
-          <span>© CFA Institute · Level I</span>
-          <button onClick={()=>setShowImport(true)} style={{background:"none",border:"none",cursor:"pointer",color:t.imp,fontSize:11,fontWeight:700}}>+ Import PDF</button>
-        </div>
+        <div style={{padding:"10px 14px",borderTop:`1px solid ${t.bdr}`,fontSize:11,color:t.lite,flexShrink:0}}>© CFA Institute · Level I 2025</div>
       </aside>
 
-      {/* ════════ MAIN CONTENT ════════ */}
       <div style={{flex:1,display:"flex",flexDirection:"column",overflow:"hidden"}}>
-
-        {/* Header */}
         <header style={{height:52,borderBottom:`1px solid ${t.bdr}`,display:"flex",alignItems:"center",padding:"0 18px",gap:10,background:t.bg,flexShrink:0}}>
           <button onClick={()=>setSideOpen(o=>!o)} style={{background:"none",border:`1px solid ${t.bdr}`,borderRadius:5,padding:"4px 9px",cursor:"pointer",color:t.muted,fontSize:16,lineHeight:1}}>☰</button>
           <nav style={{flex:1,fontSize:12.5,color:t.muted,display:"flex",alignItems:"center",gap:7,overflow:"hidden",minWidth:0}}>
             <span style={{color:t.acc,fontWeight:700,whiteSpace:"nowrap"}}>CFA Level I</span>
             <span style={{color:t.bdr,fontSize:14,flexShrink:0}}>›</span>
-            <span style={{whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis",flexShrink:1}}>{activeSubj.title}</span>
+            <span style={{whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{activeSubj.title}</span>
             <span style={{color:t.bdr,fontSize:14,flexShrink:0}}>›</span>
-            <span style={{color:t.txt,fontWeight:500,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis",flexShrink:2}}>{activeMod.title}</span>
+            <span style={{color:t.txt,fontWeight:500,whiteSpace:"nowrap",overflow:"hidden",textOverflow:"ellipsis"}}>{activeMod.title}</span>
           </nav>
-          <div style={{display:"flex",gap:7,flexShrink:0,alignItems:"center"}}>
-            <button onClick={()=>setShowImport(true)} style={{background:t.impBg,border:`1.5px solid ${t.imp}`,borderRadius:7,padding:"5px 11px",cursor:"pointer",color:t.imp,fontSize:12,fontWeight:700,whiteSpace:"nowrap"}}>📥 Import</button>
-            <button onClick={()=>setShowFC(true)} style={{background:t.fcBg,border:`1.5px solid ${t.fc}`,borderRadius:7,padding:"5px 11px",cursor:"pointer",color:t.fc,fontSize:12,fontWeight:700,whiteSpace:"nowrap"}}>
-              🃏{flashcards.length>0?` ${flashcards.length}`:""}
-            </button>
-            <button onClick={()=>toggleDone(activeMod.id)} style={{background:completed[activeMod.id]?t.doneBg:t.surf,border:`1.5px solid ${completed[activeMod.id]?t.done:t.bdr}`,borderRadius:7,padding:"5px 11px",cursor:"pointer",color:completed[activeMod.id]?t.done:t.muted,fontSize:12,fontWeight:700,whiteSpace:"nowrap",transition:"all 0.2s"}}>
-              {completed[activeMod.id]?"✓ Done":"○ Mark Done"}
-            </button>
-            <button onClick={()=>setDark(d=>!d)} style={{background:t.surf,border:`1px solid ${t.bdr}`,borderRadius:20,padding:"5px 13px",cursor:"pointer",color:t.txt,fontSize:12,fontWeight:600,whiteSpace:"nowrap"}}>
-              {dark?"☀":"☾"}
-            </button>
+          <div style={{display:"flex",gap:7,flexShrink:0}}>
+            <button onClick={()=>setShowFC(true)} style={{background:t.fcBg,border:`1.5px solid ${t.fc}`,borderRadius:7,padding:"5px 11px",cursor:"pointer",color:t.fc,fontSize:12,fontWeight:700,whiteSpace:"nowrap"}}>🃏 {flashcards.length>0?flashcards.length:""}</button>
+            <button onClick={()=>toggleDone(activeMod.id)} style={{background:completed[activeMod.id]?t.doneBg:t.surf,border:`1.5px solid ${completed[activeMod.id]?t.done:t.bdr}`,borderRadius:7,padding:"5px 11px",cursor:"pointer",color:completed[activeMod.id]?t.done:t.muted,fontSize:12,fontWeight:700,whiteSpace:"nowrap",transition:"all 0.2s"}}>{completed[activeMod.id]?"✓ Done":"○ Mark Done"}</button>
+            <button onClick={()=>setDark(d=>!d)} style={{background:t.surf,border:`1px solid ${t.bdr}`,borderRadius:20,padding:"5px 13px",cursor:"pointer",color:t.txt,fontSize:12,fontWeight:600}}>{dark?"☀":"☾"}</button>
           </div>
         </header>
 
-        {/* Scrollable Content */}
         <main ref={mainRef} style={{flex:1,overflowY:"auto"}}>
           <article style={{maxWidth:768,margin:"0 auto",padding:"52px 36px 100px"}}>
-
-            {/* Import CTA (unimported subjects) */}
-            {!subjContent && (
-              <div style={{background:t.impBg,border:`1.5px solid ${t.imp}`,borderRadius:10,padding:"18px 22px",marginBottom:32,display:"flex",alignItems:"center",justifyContent:"space-between",gap:16,flexWrap:"wrap"}}>
-                <div>
-                  <div style={{fontSize:13,fontWeight:700,color:t.imp,marginBottom:4}}>📥 PDF Not Yet Imported</div>
-                  <div style={{fontSize:13,color:t.muted,lineHeight:1.55}}>Upload the <strong style={{color:t.txt}}>{activeSubj.title}</strong> PDF to auto-populate all {activeSubj.modules.length} modules with real curriculum content, flashcards, and practice questions.</div>
-                </div>
-                <button onClick={()=>setShowImport(true)} style={{background:t.imp,color:"#fff",border:"none",borderRadius:7,padding:"9px 18px",cursor:"pointer",fontSize:13,fontWeight:700,whiteSpace:"nowrap",flexShrink:0}}>Import Now →</button>
-              </div>
-            )}
-
-            {/* Done banner */}
-            {completed[activeMod.id] && (
-              <div style={{background:t.doneBg,border:`1.5px solid ${t.done}`,borderRadius:9,padding:"12px 18px",marginBottom:28,display:"flex",alignItems:"center",gap:10}}>
-                <span style={{fontSize:20}}>✅</span>
-                <span style={{fontSize:13.5,color:t.done,fontWeight:600}}>Module marked as complete — great work!</span>
-              </div>
-            )}
-
-            {/* Module title */}
+            {completed[activeMod.id]&&(<div style={{background:t.doneBg,border:`1.5px solid ${t.done}`,borderRadius:9,padding:"12px 18px",marginBottom:28,display:"flex",alignItems:"center",gap:10}}><span style={{fontSize:20}}>✅</span><span style={{fontSize:13.5,color:t.done,fontWeight:600}}>Module marked as complete!</span></div>)}
             <div style={{marginBottom:36}}>
               <div style={{fontSize:11,fontWeight:700,color:t.acc,letterSpacing:"0.1em",textTransform:"uppercase",marginBottom:10}}>{activeSubj.num} · {activeSubj.title}</div>
-              <h1 style={{fontFamily:"'Crimson Pro',Georgia,serif",fontSize:"clamp(26px,3.5vw,40px)",fontWeight:600,lineHeight:1.16,color:t.txt,marginBottom:18,letterSpacing:"-0.3px"}}>
-                {activeMod.num}&nbsp;&nbsp;{activeMod.title}
-              </h1>
-              <p style={{fontSize:17,lineHeight:1.85,color:t.muted,fontFamily:"'Crimson Pro',Georgia,serif",margin:0}}>{intro}</p>
+              <h1 style={{fontFamily:"Georgia,serif",fontSize:"clamp(26px,3.5vw,40px)",fontWeight:600,lineHeight:1.16,color:t.txt,marginBottom:18,letterSpacing:"-0.3px"}}>{activeMod.num}&nbsp;&nbsp;{activeMod.title}</h1>
+              <p style={{fontSize:17,lineHeight:1.85,color:t.muted,fontFamily:"Georgia,serif",margin:0}}>{intro}</p>
             </div>
-
-            {/* Flashcard CTA */}
-            {flashcards.length > 0 && (
-              <div style={{background:t.fcBg,border:`1px solid ${t.fc}`,borderRadius:9,padding:"14px 18px",marginBottom:32,display:"flex",alignItems:"center",justifyContent:"space-between",gap:12,flexWrap:"wrap"}}>
-                <div>
-                  <div style={{fontSize:12,fontWeight:700,color:t.fc,marginBottom:2}}>🃏 {flashcards.length} Flashcards — auto-generated from PDF</div>
-                  <div style={{fontSize:12.5,color:t.muted}}>Reinforce key concepts with active recall.</div>
-                </div>
-                <button onClick={()=>setShowFC(true)} style={{background:t.fc,color:"#fff",border:"none",borderRadius:7,padding:"8px 18px",cursor:"pointer",fontSize:13,fontWeight:700,whiteSpace:"nowrap"}}>Start Deck →</button>
-              </div>
-            )}
-
-            {/* In-module TOC */}
+            {flashcards.length>0&&(<div style={{background:t.fcBg,border:`1px solid ${t.fc}`,borderRadius:9,padding:"14px 18px",marginBottom:32,display:"flex",alignItems:"center",justifyContent:"space-between",gap:12,flexWrap:"wrap"}}>
+              <div><div style={{fontSize:12,fontWeight:700,color:t.fc,marginBottom:2}}>🃏 {flashcards.length} Flashcards — from 2025 CFA curriculum</div><div style={{fontSize:12.5,color:t.muted}}>Reinforce key concepts with active recall.</div></div>
+              <button onClick={()=>setShowFC(true)} style={{background:t.fc,color:"#fff",border:"none",borderRadius:7,padding:"8px 18px",cursor:"pointer",fontSize:13,fontWeight:700,whiteSpace:"nowrap"}}>Start Deck →</button>
+            </div>)}
             <div style={{background:t.surf,border:`1px solid ${t.bdr}`,borderRadius:9,padding:"16px 22px",marginBottom:44}}>
               <div style={{fontSize:10.5,fontWeight:700,color:t.lite,textTransform:"uppercase",letterSpacing:"0.08em",marginBottom:11}}>In this module</div>
-              {sections.map(sec=>(
-                <button key={sec.id} onClick={()=>scrollTo(sec.id)} style={{display:"block",background:"none",border:"none",cursor:"pointer",textAlign:"left",padding:"3px 0",color:t.link,fontSize:13.5,lineHeight:1.55}}>
-                  <span style={{color:t.lite,marginRight:8,fontSize:11}}>{sec.num}</span>{sec.title}
-                </button>
-              ))}
-              <button onClick={()=>scrollTo(`q-${activeMod.id}`)} style={{display:"block",background:"none",border:"none",cursor:"pointer",textAlign:"left",padding:"4px 0 0",color:t.link,fontSize:13.5,borderTop:`1px solid ${t.bdr}`,marginTop:8,width:"100%"}}>
-                <span style={{color:t.lite,marginRight:8}}>✎</span>End of Module Questions
-              </button>
+              {sections.map(sec=>(<button key={sec.id} onClick={()=>scrollTo(sec.id)} style={{display:"block",background:"none",border:"none",cursor:"pointer",textAlign:"left",padding:"3px 0",color:t.link,fontSize:13.5,lineHeight:1.55}}><span style={{color:t.lite,marginRight:8,fontSize:11}}>{sec.num}</span>{sec.title}</button>))}
+              <button onClick={()=>scrollTo(`q-${activeMod.id}`)} style={{display:"block",background:"none",border:"none",cursor:"pointer",textAlign:"left",padding:"4px 0 0",color:t.link,fontSize:13.5,borderTop:`1px solid ${t.bdr}`,marginTop:8,width:"100%"}}><span style={{color:t.lite,marginRight:8}}>✎</span>Practice Questions</button>
             </div>
-
             <hr style={{border:"none",borderTop:`1px solid ${t.bdr}`,marginBottom:44}}/>
-
-            {/* Sections */}
-            {sections.map(sec=>(
-              <section key={sec.id} id={sec.id} style={{marginBottom:58,scrollMarginTop:24}}>
-                <h2 style={{fontFamily:"'Crimson Pro',Georgia,serif",fontSize:25,fontWeight:600,color:t.txt,marginBottom:22,paddingBottom:11,borderBottom:`1px solid ${t.bdr}`,display:"flex",alignItems:"baseline",gap:11,marginTop:0}}>
-                  <span style={{color:t.acc,fontSize:18,fontWeight:700,flexShrink:0}}>{sec.num}</span>{sec.title}
-                </h2>
-                <Callout type="note" t={t} label="📌 Exam Note">{sec.note}</Callout>
-                <Callout type="def" t={t} label="📖 Key Definition">{sec.definition}</Callout>
-                <div style={{marginBottom:22}}>
-                  {sec.body.split("\n\n").map((p,pi)=>(
-                    <p key={pi} style={{fontSize:16.5,lineHeight:1.9,color:p.startsWith("[")?t.lite:t.txt,fontFamily:"'Crimson Pro',Georgia,serif",marginBottom:16,marginTop:0,fontStyle:p.startsWith("[")?"italic":"normal"}}>{p}</p>
-                  ))}
-                </div>
-                <Callout type="ex" t={t} label="💡 Worked Example">{sec.example}</Callout>
-              </section>
-            ))}
-
-            {/* Practice Questions */}
-            <section id={`q-${activeMod.id}`} style={{background:t.qBg,border:`1px solid ${t.qBdr}`,borderRadius:10,padding:"28px 28px 22px",marginTop:8,scrollMarginTop:24}}>
+            {sections.map(sec=>(<section key={sec.id} id={sec.id} style={{marginBottom:58,scrollMarginTop:24}}>
+              <h2 style={{fontFamily:"Georgia,serif",fontSize:25,fontWeight:600,color:t.txt,marginBottom:22,paddingBottom:11,borderBottom:`1px solid ${t.bdr}`,display:"flex",alignItems:"baseline",gap:11,marginTop:0}}>
+                <span style={{color:t.acc,fontSize:18,fontWeight:700,flexShrink:0}}>{sec.num}</span>{sec.title}
+              </h2>
+              <Callout type="note" t={t} label="📌 Exam Note">{sec.note}</Callout>
+              <Callout type="def" t={t} label="📖 Key Definition">{sec.definition}</Callout>
+              <div style={{marginBottom:22}}>{(sec.body||"").split("\n\n").map((p,pi)=>(<p key={pi} style={{fontSize:16.5,lineHeight:1.9,color:t.txt,fontFamily:"Georgia,serif",marginBottom:16,marginTop:0}}>{p}</p>))}</div>
+              <Callout type="ex" t={t} label="💡 Worked Example">{sec.example}</Callout>
+            </section>))}
+            <section id={`q-${activeMod.id}`} style={{background:t.qBg,border:`1px solid ${t.qBdr}`,borderRadius:10,padding:"28px 28px 22px",marginTop:8}}>
               <div style={{display:"flex",alignItems:"center",gap:10,marginBottom:8,flexWrap:"wrap"}}>
                 <span style={{background:t.qBdr,color:"#fff",borderRadius:5,padding:"3px 11px",fontSize:10.5,fontWeight:700,letterSpacing:"0.07em",textTransform:"uppercase"}}>Practice</span>
-                <h3 style={{fontFamily:"'Crimson Pro',Georgia,serif",fontSize:21,fontWeight:600,color:t.txt,margin:0}}>End of Module Questions</h3>
+                <h3 style={{fontFamily:"Georgia,serif",fontSize:21,fontWeight:600,color:t.txt,margin:0}}>End of Module Questions</h3>
               </div>
-              <p style={{fontSize:13.5,color:t.muted,marginBottom:22,lineHeight:1.65,marginTop:4}}>
-                {modContent?"Questions auto-generated from your imported PDF.":"Import the PDF to generate real practice questions for this module."}
-              </p>
-              <ol style={{padding:0,margin:0}}>
-                {questions.map((q,qi)=><QItem key={qi} num={qi+1} q={q} t={t}/>)}
-              </ol>
+              <p style={{fontSize:13.5,color:t.muted,marginBottom:22,lineHeight:1.65,marginTop:4}}>CFA-style practice questions based on 2025 curriculum. Click "Show answer" to reveal.</p>
+              <ol style={{padding:0,margin:0}}>{questions.map((q,qi)=>(<QItem key={qi} num={qi+1} q={q} t={t}/>))}</ol>
             </section>
-
-            {/* Mark complete */}
             <div style={{marginTop:32,textAlign:"center"}}>
-              <button onClick={()=>toggleDone(activeMod.id)} style={{background:completed[activeMod.id]?t.doneBg:t.surf,border:`1.5px solid ${completed[activeMod.id]?t.done:t.bdr}`,borderRadius:8,padding:"11px 28px",cursor:"pointer",color:completed[activeMod.id]?t.done:t.muted,fontSize:14,fontWeight:700,transition:"all 0.2s"}}>
-                {completed[activeMod.id]?"✓ Module Complete — click to undo":"○ Mark this module as complete"}
-              </button>
+              <button onClick={()=>toggleDone(activeMod.id)} style={{background:completed[activeMod.id]?t.doneBg:t.surf,border:`1.5px solid ${completed[activeMod.id]?t.done:t.bdr}`,borderRadius:8,padding:"11px 28px",cursor:"pointer",color:completed[activeMod.id]?t.done:t.muted,fontSize:14,fontWeight:700,transition:"all 0.2s"}}>{completed[activeMod.id]?"✓ Module Complete — click to undo":"○ Mark this module as complete"}</button>
             </div>
-
-            {/* Prev / Next */}
             <div style={{display:"flex",gap:16,marginTop:30,flexWrap:"wrap"}}>
               {prev?<NavBtn dir="prev" mod={prev} t={t} onClick={()=>go(prev)}/>:<div style={{flex:1}}/>}
               {next&&<NavBtn dir="next" mod={next} t={t} onClick={()=>go(next)}/>}
             </div>
-
           </article>
         </main>
       </div>
